@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Music</string>
+    <string name="facebook_app_id">1025207350859025</string>
+    <string name="title_activity_fetch_contact_details">FetchContactDetails</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="launch_contacts">Launch Contacts</string>
+    <string name="title_activity_media_player_broadcast_receiver">MediaPlayerBroadcastReceiver</string>
+    <string name="title_activity_media_player">MediaPlayer</string>
+    <string name="browse">Browse</string>
+    <string name="title_activity_song_picker">SongPicker</string>
+    <string name="pick_a_song">Choose a Song From this List</string>
+    <string name="play_or_pause">Play/Pause</string>
+    <string name="next">Next</string>
+    <string name="title_activity_facebook_login">FacebookLoginActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_playlist">PlaylistActivity</string>
+    <string name="title_activity_music_library">MusicLibraryActivity</string>
+</resources>

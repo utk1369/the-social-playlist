@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1sp"
+    android:weightSum="10">
+
+    <ImageView
+        android:layout_margin="10sp"
+        android:id="@+id/thumbnail"
+        android:layout_width="0sp"
+        android:layout_height="40sp"
+        android:layout_weight="1.25"
+        android:background="@color/defaultCardBg"/>
+
+    <RelativeLayout
+        android:layout_weight="8.75"
+        android:layout_width="0sp"
+        android:layout_height="fill_parent"
+        android:padding="@dimen/default_track_list_row_padding">
+        <TextView
+            android:id="@+id/track_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-normal"
+            android:text="Track"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:textColor="@color/primaryTextColor"/>
+        <TextView
+            android:layout_marginTop="3sp"
+            android:id="@+id/track_artist"
+            android:layout_below="@+id/track_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Artist"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="italic"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"/>
+    </RelativeLayout>
+
+</LinearLayout>

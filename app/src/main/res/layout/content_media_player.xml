@@ -1,0 +1,165 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:menu_card="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    xmlns:song_title_card="http://schemas.android.com/apk/res-auto"
+    tools:context=".activity.musicplayer.MediaPlayerActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/song_title_card"
+        song_title_card:cardElevation="@dimen/defaultCardElevation">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="10"
+            android:id="@+id/header_view"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_weight="9"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:padding="10sp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/song_title"
+                    android:textSize="20sp"
+                    android:textColor="@color/primaryTextColor"
+                    android:textStyle="normal"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="Select a song"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"/>
+
+                <TextView
+                    android:layout_below="@+id/song_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/song_artist"
+                    android:textSize="15sp"
+                    android:textColor="@color/secondaryTextColor"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-light"
+                    android:text="Artist"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_marginRight="10sp">
+
+                <ImageButton
+                    android:id="@+id/browse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_library_music_black_24dp"
+                    android:background="@android:color/transparent"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_below="@id/song_title_card"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:weightSum="10"
+        android:layout_marginTop="@dimen/mediaPlayerDefaultComponentMargin">
+        <android.support.v7.widget.CardView
+            android:id="@+id/thumbnail_card"
+            android:layout_weight="9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            menu_card:cardElevation="@dimen/defaultCardElevation">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:src="@drawable/ic_audiotrack_black_48dp"
+                android:layout_gravity="center"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/menu_card"
+            android:layout_weight="1"
+            android:layout_below="@id/thumbnail_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            menu_card:cardBackgroundColor="@color/colorPrimary"
+            android:layout_marginTop="@dimen/mediaPlayerDefaultComponentMargin">
+
+           <!-- <android.support.v7.widget.AppCompatSeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"/>-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+                <ImageButton
+                    android:layout_margin="5sp"
+                    android:id="@+id/shuffle_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_shuffle_white_24dp"
+                    android:background="@android:color/transparent"
+                    android:padding="5sp"/>
+
+                <ImageButton
+                    android:layout_margin="5sp"
+                    android:id="@+id/prev_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_skip_previous_white_24dp"
+                    android:background="@android:color/transparent"
+                    android:padding="5sp"
+                    android:layout_toRightOf="@+id/shuffle_btn"/>
+                <ImageButton
+                    android:layout_margin="5sp"
+                    android:padding="5sp"
+                    android:id="@+id/play_pause_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_play_arrow_white_24dp"
+                    android:background="@android:color/transparent"
+                    android:layout_toRightOf="@+id/prev_btn"/>
+
+                <ImageButton
+                    android:layout_margin="5sp"
+                    android:id="@+id/next_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_skip_next_white_24dp"
+                    android:background="@android:color/transparent"
+                    android:layout_toRightOf="@+id/play_pause_btn"
+                    android:padding="5sp"/>
+                <ImageButton
+                    android:layout_margin="5sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/playlist"
+                    android:src="@drawable/ic_queue_music_white_24dp"
+                    android:background="@android:color/transparent"
+                    android:layout_toRightOf="@+id/next_btn"
+                    android:padding="5sp"/>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+</RelativeLayout>
