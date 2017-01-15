@@ -1,13 +1,23 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 25
+    buildToolsVersion "25"
+
+    signingConfigs {
+        debug {
+            storeFile file("C:\\Users\\user\\.android\\tsp.jks")
+            storePassword "tspandroid"
+            keyAlias "dev"
+            keyPassword "tspandroid"
+        }
+    }
 
     defaultConfig {
-        applicationId "com.example.user.music"
+        applicationId "com.thesocialplaylist.user.music"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -17,18 +27,40 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 repositories {
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.facebook.android:facebook-android-sdk:4.+'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.8.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.google.apis:google-api-services-youtube:v3-rev178-1.22.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile ('com.google.http-client:google-http-client-gson:1.21.0') {
+        exclude module: 'httpclient'
+    }
+    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'org.greenrobot:eventbus:3.0.0'
+
+    //Dagger
+    apt 'com.google.dagger:dagger-compiler:2.5'
+    compile 'com.google.dagger:dagger:2.5'
+    provided 'javax.annotation:jsr250-api:1.0'
+
+    compile 'org.apache.commons:commons-lang3:3.4'
+
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
 }

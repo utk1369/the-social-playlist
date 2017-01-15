@@ -59,7 +59,7 @@
             <fragment
                 android:layout_weight="1.5"
                 android:id="@+id/media_controls_fragment"
-                android:name="com.example.user.music.fragment.musicplayer.mediacontroller.MediaControllerFragment"
+                android:name="com.thesocialplaylist.user.music.fragment.musicplayer.mediacontroller.MediaControllerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="0sp"
                 tools:layout="@layout/media_controller_fragment"/>

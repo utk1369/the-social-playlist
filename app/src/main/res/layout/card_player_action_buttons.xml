@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:menu_card="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/menu_card"
+        android:layout_weight="1.5"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        menu_card:cardBackgroundColor="@color/colorPrimary">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <ImageButton
+                android:layout_margin="5sp"
+                android:id="@+id/shuffle_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_shuffle_white_24dp"
+                android:background="@android:color/transparent"
+                android:padding="5sp"/>
+
+            <ImageButton
+                android:layout_margin="5sp"
+                android:id="@+id/prev_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_skip_previous_white_24dp"
+                android:background="@android:color/transparent"
+                android:padding="5sp"
+                android:layout_toRightOf="@+id/shuffle_btn"/>
+            <ImageButton
+                android:layout_margin="5sp"
+                android:padding="5sp"
+                android:id="@+id/play_pause_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play_arrow_white_24dp"
+                android:background="@android:color/transparent"
+                android:layout_toRightOf="@+id/prev_btn"/>
+
+            <ImageButton
+                android:layout_margin="5sp"
+                android:id="@+id/next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_skip_next_white_24dp"
+                android:background="@android:color/transparent"
+                android:layout_toRightOf="@+id/play_pause_btn"
+                android:padding="5sp"/>
+            <ImageButton
+                android:layout_margin="5sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/playlist"
+                android:src="@drawable/ic_queue_music_white_24dp"
+                android:background="@android:color/transparent"
+                android:layout_toRightOf="@+id/next_btn"
+                android:padding="5sp"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</merge>

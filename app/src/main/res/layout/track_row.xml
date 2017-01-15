@@ -15,7 +15,7 @@
         android:background="@color/defaultCardBg"/>
 
     <RelativeLayout
-        android:layout_weight="8.75"
+        android:layout_weight="7.75"
         android:layout_width="0sp"
         android:layout_height="fill_parent"
         android:padding="@dimen/default_track_list_row_padding">
@@ -45,4 +45,11 @@
             android:ellipsize="marquee"/>
     </RelativeLayout>
 
+    <ImageButton
+        android:layout_weight="1"
+        android:layout_marginTop="0sp"
+        android:background="@android:color/transparent"
+        android:layout_width="0sp"
+        android:layout_height="match_parent"
+        android:id="@+id/options"/>
 </LinearLayout>

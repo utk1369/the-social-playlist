@@ -1,0 +1,15 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="8sp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.thesocialplaylist.user.music.fragment.musicplayer.youtube.YoutubeSearchFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/youtube_search_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+</FrameLayout>

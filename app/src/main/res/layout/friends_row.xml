@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1sp"
+    android:weightSum="10">
+
+    <ImageView
+        android:layout_margin="10sp"
+        android:id="@+id/display_picture"
+        android:layout_width="0sp"
+        android:layout_height="40sp"
+        android:layout_weight="1.25"
+        android:background="@color/secondaryTextColor"
+        android:padding="2sp"/>
+
+    <RelativeLayout
+        android:layout_weight="8.75"
+        android:layout_width="0sp"
+        android:layout_height="fill_parent"
+        android:padding="@dimen/default_track_list_row_padding">
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:text="User Name"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:textColor="@color/primaryTextColor"/>
+        <TextView
+            android:id="@+id/extra_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:text="..."
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="italic"/>
+    </RelativeLayout>
+
+</LinearLayout>

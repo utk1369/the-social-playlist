@@ -21,4 +21,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_playlist">PlaylistActivity</string>
     <string name="title_activity_music_library">MusicLibraryActivity</string>
+    <string name="title_activity_youtube_player">YoutubePlayer</string>
 </resources>

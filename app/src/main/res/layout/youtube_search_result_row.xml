@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="2sp"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="10">
+
+    <ImageView
+        android:id="@+id/video_thumbnail"
+        android:layout_weight="2"
+        android:layout_width="0sp"
+        android:layout_height="64sp"
+        android:src="@drawable/ic_audiotrack_black_24dp"/>
+
+    <TextView
+        android:id="@+id/video_title"
+        android:padding="8sp"
+        android:layout_weight="7"
+        android:layout_width="0sp"
+        android:layout_height="64sp"
+        android:fontFamily="sans-serif-normal"
+        android:textSize="12sp"
+        android:textColor="@color/colorDark"
+        android:text="Video title"
+        android:lines="4"
+        android:ellipsize="end"/>
+
+    <RadioButton
+        android:id="@+id/is_selected"
+        android:layout_marginTop="5sp"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

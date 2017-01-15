@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <android.support.v7.widget.CardView
+        android:layout_marginTop="8sp"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_weight="2.5">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="10">
+            
+            <ImageView
+                android:id="@+id/youtube_thumbnail"
+                android:layout_width="0sp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:src="@drawable/ic_equalizer_white_24dp"
+                android:background="@color/colorDark"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/youtube_title"
+                android:layout_width="0sp"
+                android:layout_height="match_parent"
+                android:layout_weight="6"
+                android:lines="3"
+                android:text="Youtube Video Title..."
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-condensed"
+                android:background="@color/defaultCardBg"
+                android:padding="8sp"/>
+            
+        </LinearLayout>
+        
+    </android.support.v7.widget.CardView>
+
+</merge>

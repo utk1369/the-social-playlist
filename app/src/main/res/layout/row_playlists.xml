@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/playlist_title"
-            android:text="0 songs"
+            android:text="0 songDTOs"
             android:textSize="10sp"
             android:fontFamily="sans-serif-light"
             android:textStyle="italic"/>
