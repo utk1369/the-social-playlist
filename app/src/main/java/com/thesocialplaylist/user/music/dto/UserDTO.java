@@ -108,4 +108,20 @@ public class UserDTO implements Serializable {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", fbId='" + fbId + '\'' +
+                ", status='" + status + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", friends=" + friends +
+                ", songDTOs=" + songDTOs +
+                ", socialActivities=" + socialActivities +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

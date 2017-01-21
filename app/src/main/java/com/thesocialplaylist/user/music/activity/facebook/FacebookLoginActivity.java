@@ -83,7 +83,7 @@ public class FacebookLoginActivity extends Activity {
                /* info.setText("Welcome: " + loginResult.getAccessToken().getUserId()
                 + "\nAuth Token: "+ loginResult.getAccessToken().getToken());*/
                 final Profile profile = Profile.getCurrentProfile();
-                Log.i("UserDTO Name", profile.getName());
+                Log.i("User Name", profile.getName());
                 Log.i("Access Token", loginResult.getAccessToken().getToken());
                 Log.i("Permissions", String.valueOf(AccessToken.getCurrentAccessToken().getPermissions()));
 
