@@ -2,46 +2,40 @@ package com.thesocialplaylist.user.music.manager;
 
 import android.app.Application;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.dto.AlbumDTO;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.SongMetadataDTO;
 import com.thesocialplaylist.user.music.dto.builders.SongDTOBuilder;
-import com.thesocialplaylist.user.music.sqlitedbcache.SQLiteCacheManager;
+import com.thesocialplaylist.user.music.dto.extractors.ExternalLinksDTOExtractor;
+import com.thesocialplaylist.user.music.dto.extractors.SongDTOExtractor;
+import com.thesocialplaylist.user.music.sqlitedbcache.dao.ExternalLinksCacheDAO;
+import com.thesocialplaylist.user.music.sqlitedbcache.dao.SongsCacheDAO;
+import com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache;
-import com.thesocialplaylist.user.music.utils.AppUtil;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Created by user on 01-09-2016.
  */
 public class MusicLibraryManager {
 
-    SQLiteCacheManager sqLiteCacheManager;
+    SongsCacheDAO songsCacheDAO;
+
+    ExternalLinksCacheDAO externalLinksCacheDAO;
+
     Application app;
 
-    public MusicLibraryManager(SQLiteCacheManager sqLiteCacheManager, Application app) {
-        this.sqLiteCacheManager = sqLiteCacheManager;
+    public MusicLibraryManager(SongsCacheDAO songsCacheDAO, ExternalLinksCacheDAO externalLinksCacheDAO, Application app) {
+        this.songsCacheDAO = songsCacheDAO;
+        this.externalLinksCacheDAO = externalLinksCacheDAO;
         this.app = app;
     }
 
@@ -129,7 +123,7 @@ public class MusicLibraryManager {
     public List<SongDTO> getAllSongs(String filterCriteria, String[] filterParameters) {
         List<SongDTO> songDTOs = new ArrayList<>();
         List<SongMetadataDTO> songMetadataDTOs = getSongsAsList(filterCriteria, filterParameters);
-        List<SongsCache> songsCaches = sqLiteCacheManager.getAllSongsFromCache();
+        List<SongsCache> songsCaches = songsCacheDAO.getAllSongsFromCache();
 
         for(SongMetadataDTO metadataDTO: songMetadataDTOs) {
             SongDTO songDTO = null;
@@ -152,20 +146,48 @@ public class MusicLibraryManager {
     }
 
     public SongDTO getSongDetails(String id){
-        SongsCache songsCache = sqLiteCacheManager.getSongsCache(id);
+        SongsCache songsCache = songsCacheDAO.getSongById(id);
         SongMetadataDTO metadataDTO = getSongMetadataById(id);
         return SongDTOBuilder.populate(songsCache, metadataDTO);
     }
 
     public SongDTO saveSongDetailsToCache(SongDTO songDTO) {
-        Long songCacheId = sqLiteCacheManager.saveSongDetails(songDTO);
+        SongsCache existingSongsCache = songsCacheDAO.getSongById(songDTO.getId());
+        Long mId = null;
+
+        //Insert
+        if(existingSongsCache == null) {
+            songsCacheDAO.save(SongDTOExtractor.extractSongsCacheFromSongDTO(songDTO));
+        } else { //Update
+            SongsCache existingRecord = songsCacheDAO.getSongCacheByDefaultId(existingSongsCache.getId());
+            songsCacheDAO.merge(existingRecord,
+                    SongDTOExtractor.extractSongsCacheFromSongDTO(songDTO));
+            songsCacheDAO.save(existingRecord);
+        }
         return getSongDetails(songDTO.getMetadata().getSongId());
     }
 
     public ExternalLinksDTO associateSongToExternalLink(String songId, ExternalLinksDTO externalLinksDTO) {
         //link it via REST first
-        ExternalLinksDTO linkedExternalLinksDTO = sqLiteCacheManager
-                .associateSongToExternalLinkInCache(songId, externalLinksDTO);
-        return linkedExternalLinksDTO;
+        //do this in transaction
+        SongsCache songsCache = songsCacheDAO.getSongById(songId);
+        if(songsCache == null) {
+            SongDTO newSongDTO = new SongDTO();
+            newSongDTO.setId(songId);
+            Long mId = songsCacheDAO.save(SongDTOExtractor.extractSongsCacheFromSongDTO(newSongDTO));
+            songsCache = songsCacheDAO.getSongById(songId);
+        }
+
+        ExternalLinksCache newExternalLinksCache = ExternalLinksDTOExtractor.extractExternalLinksCache(songsCache, externalLinksDTO);
+
+        //delete any other existing entries for the same type for the same song
+        List<ExternalLinksCache> existingExternalLinks = songsCache.externalLinksCache();
+        for(ExternalLinksCache externalLinksCache: existingExternalLinks) {
+            if(externalLinksCache.getLinkItemTp().equals(newExternalLinksCache.getLinkItemTp()))
+                externalLinksCacheDAO.delete(externalLinksCache);
+        }
+
+        externalLinksCacheDAO.insert(songsCache, newExternalLinksCache);
+        return externalLinksDTO;
     }
 }

@@ -3,10 +3,11 @@ package com.thesocialplaylist.user.music;
 import android.app.Application;
 
 import com.activeandroid.ActiveAndroid;
+
 import com.thesocialplaylist.user.music.dependencyinjection.components.DaggerMusicLibraryManagerComponent;
-import com.thesocialplaylist.user.music.dependencyinjection.components.DaggerRetrofitComponent;
+import com.thesocialplaylist.user.music.dependencyinjection.components.DaggerUserDataAndRelationsManagerComponent;
 import com.thesocialplaylist.user.music.dependencyinjection.components.MusicLibraryManagerComponent;
-import com.thesocialplaylist.user.music.dependencyinjection.components.RetrofitComponent;
+import com.thesocialplaylist.user.music.dependencyinjection.components.UserDataAndRelationsManagerComponent;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.AppModule;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.RetrofitModule;
 import com.thesocialplaylist.user.music.utils.AppUtil;
@@ -23,14 +24,14 @@ public class TheSocialPlaylistApplication extends Application {
 
     private MusicLibraryManagerComponent musicLibraryManagerComponent;
 
-    private RetrofitComponent retrofitComponent;
+    private UserDataAndRelationsManagerComponent userDataAndRelationsManagerComponent;
 
     public MusicLibraryManagerComponent getMusicLibraryManagerComponent() {
         return musicLibraryManagerComponent;
     }
 
-    public RetrofitComponent getRetrofitComponent() {
-        return retrofitComponent;
+    public UserDataAndRelationsManagerComponent getUserDataAndRelationsManagerComponent() {
+        return userDataAndRelationsManagerComponent;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class TheSocialPlaylistApplication extends Application {
                 .appModule(new AppModule(this))
                 .build();
 
-        retrofitComponent = DaggerRetrofitComponent
+        userDataAndRelationsManagerComponent = DaggerUserDataAndRelationsManagerComponent
                 .builder()
                 .retrofitModule(new RetrofitModule(BASE_URL))
                 .build();

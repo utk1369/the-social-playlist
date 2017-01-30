@@ -1,5 +1,7 @@
 package com.thesocialplaylist.user.music.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  */
 public class UserDTO implements Serializable {
 
+    @SerializedName("_id")
     private String id;
 
     private String name;
@@ -19,7 +22,7 @@ public class UserDTO implements Serializable {
 
     private String imageUrl;
 
-    private List<String> friends;
+    private List<UserDTO> friends; //should be list of UserDTOs
 
     private List<SongDTO> songDTOs;
 
@@ -69,11 +72,11 @@ public class UserDTO implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public List<String> getFriends() {
+    public List<UserDTO> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<String> friends) {
+    public void setFriends(List<UserDTO> friends) {
         this.friends = friends;
     }
 

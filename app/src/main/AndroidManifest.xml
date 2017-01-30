@@ -29,12 +29,13 @@
 
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="4"/>
+            android:value="5"/>
 
         <meta-data
             android:name="AA_MODELS"
             android:value="com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache,
-                com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache" />
+                com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,
+                com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
 
         <activity
             android:name="com.facebook.FacebookActivity"

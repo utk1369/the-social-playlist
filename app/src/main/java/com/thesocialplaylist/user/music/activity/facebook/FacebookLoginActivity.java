@@ -25,14 +25,18 @@ import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.thesocialplaylist.user.music.dto.UserDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class FacebookLoginActivity extends Activity {
 
@@ -92,19 +96,8 @@ public class FacebookLoginActivity extends Activity {
                             @Override
                             public void onCompleted(GraphResponse response) {
                                 Intent intent = new Intent(FacebookLoginActivity.this, MainActivity.class);
-                                JSONObject jsonResponse = null;
-                                try {
-                                    jsonResponse = new JSONObject(response.getRawResponse());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                JSONArray friends = null;
-                                try {
-                                    friends = jsonResponse.getJSONArray("data");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                intent.putExtra("FRIENDS_LIST",  friends.toString());
+                                List<UserDTO> friends = getFriendsList(response);
+                                intent.putExtra("FRIENDS_LIST", (Serializable) friends);
                                 intent.putExtra("FB_USER_ID", profile.getId());
                                 intent.putExtra("FB_USER_NAME", profile.getName());
                                 intent.putExtra("accessToken", loginResult.getAccessToken().getToken());
@@ -125,6 +118,37 @@ public class FacebookLoginActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    private List<UserDTO> getFriendsList(GraphResponse response) {
+
+        JSONObject jsonResponse = null;
+        try {
+            jsonResponse = new JSONObject(response.getRawResponse());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JSONArray friends = null;
+        try {
+            friends = jsonResponse.getJSONArray("data");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.i("Friends List: ", friends.toString());
+        List<UserDTO> friendsDTOs = new ArrayList<>();
+        for(int i=0; i<friends.length(); i++) {
+            try {
+                JSONObject friend = friends.getJSONObject(i);
+                UserDTO usr = new UserDTO();
+                usr.setName(friend.getString("name"));
+                usr.setFbId(friend.getString("id"));
+                friendsDTOs.add(usr);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return friendsDTOs;
     }
 
 }

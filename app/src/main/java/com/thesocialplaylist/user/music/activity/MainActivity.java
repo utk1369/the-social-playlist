@@ -18,14 +18,12 @@ import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
 import com.thesocialplaylist.user.music.activity.musicplayer.MediaPlayerActivity;
-import com.thesocialplaylist.user.music.api.UserApi;
+import com.thesocialplaylist.user.music.api.declaration.UserApi;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserSearchDTO;
 import com.thesocialplaylist.user.music.fragment.FriendsList;
-import com.thesocialplaylist.user.music.dto.AppHttpResponse;
-import com.thesocialplaylist.user.music.dto.HttpResponseHandler;
-import com.thesocialplaylist.user.music.utils.AppUtil;
-import com.thesocialplaylist.user.music.manager.HttpTaskManager;
+import com.thesocialplaylist.user.music.manager.UserDataAndRelationsManager;
+import com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache;
 
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -34,7 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +40,6 @@ import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private ImageButton mediaPlayerBtn;
 
+    @Inject
+    public UserDataAndRelationsManager userDataAndRelationsManager;
+
+    private UserApi userApi;
+
     private UserDTO userDTO;
 
     public UserDTO getUserDTO() {
@@ -63,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
     public void setUserDTO(UserDTO userDTO) {
         this.userDTO = userDTO;
     }
-
-    @Inject
-    Retrofit retrofit;
-
-    private UserApi userApiService;
 
     private void init() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -92,15 +88,15 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        ((TheSocialPlaylistApplication) getApplication()).getRetrofitComponent().inject(this);
+        ((TheSocialPlaylistApplication) getApplication()).getUserDataAndRelationsManagerComponent().inject(this);
 
-        userApiService = retrofit.create(UserApi.class);
+        userApi = userDataAndRelationsManager.getUserApi();
     }
 
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Feed");
-        viewPagerAdapter.addFragment(FriendsList.newInstance(getFriendsList(getIntent().getStringExtra("FRIENDS_LIST"))), "Friends");
+        viewPagerAdapter.addFragment(FriendsList.newInstance((List<UserDTO>) getIntent().getSerializableExtra("FRIENDS_LIST")), "Friends");
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Notifications");
         return viewPagerAdapter;
     }
@@ -112,17 +108,34 @@ public class MainActivity extends AppCompatActivity {
         init();
         Intent intent = getIntent();
         login(intent.getStringExtra("FB_USER_ID"), intent.getStringExtra("FB_USER_NAME"));
-        //loginOrRegister(intent.getStringExtra("FB_USER_ID"), intent.getStringExtra("FB_USER_NAME"));
+    }
+
+    private void updateUserProfile(UserDTO userDTO) {
+        //update User Details
+        userDataAndRelationsManager.saveUserDetailsToCache(userDTO, UserRelCache.RELATIONSHIP_TYPES.APP_USER);
+        //Update Friends Details
+        if(userDTO.getFriends() != null && userDTO.getFriends().size() > 0) {
+            for(UserDTO friend: userDTO.getFriends())
+                userDataAndRelationsManager.saveUserDetailsToCache(friend, UserRelCache.RELATIONSHIP_TYPES.FRIEND);
+        }
+        updateFriendsList((List<UserDTO>) getIntent().getSerializableExtra("FRIENDS_LIST"));
+    }
+
+    private void updateFriendsList(List<UserDTO> newFriendsList) {
+        //compare the friend list in the local db with friendsList from FB and update the User details in the service accordingly
+        List<UserDTO> existingFriends = userDataAndRelationsManager.getAllFriendsData();
+        //for()
+
     }
 
     private void login(final String fbUserId, final String name) {
 
-        final ProgressDialog loading = ProgressDialog.show(MainActivity.this, "Attempting Login.", "Please wait...");
+        final ProgressDialog loading = ProgressDialog.show(MainActivity.this, "Please wait", "Refreshing your screen");
         final UserSearchDTO searchDTO = new UserSearchDTO();
-        final UserDTO userDTO = new UserDTO();
-        userDTO.setFbId(fbUserId);
-        searchDTO.setCriteria(userDTO);
-        Call<List<UserDTO>> searchCall = userApiService.searchUser(searchDTO);
+        final UserDTO userSearchCriteria = new UserDTO();
+        userSearchCriteria.setFbId(fbUserId);
+        searchDTO.setCriteria(userSearchCriteria);
+        Call<List<UserDTO>> searchCall = userApi.searchUser(searchDTO);
         searchCall.enqueue(new Callback<List<UserDTO>>() {
             @Override
             public void onResponse(Call<List<UserDTO>> call, Response<List<UserDTO>> response) {
@@ -130,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body().size() > 0) {
                     List<UserDTO> userList = response.body();
                     setUserDTO(userList.get(0));
-                    Log.i("LOGIN", "User found: " + userDTO.getName());
+                    Log.i("LOGIN", "User found: " + getUserDTO().getId());
+                    updateUserProfile(userDTO);
                 } else if(response.body().size() == 0 || response.code() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
                     Log.i("LOGIN", "User not found! [" +response.errorBody()  + "]");
                     UserDTO newUser = new UserDTO();
@@ -151,14 +165,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void register(final UserDTO userDTO) {
         final ProgressDialog progressInd = ProgressDialog.show(MainActivity.this, "Registering User.", "Please wait...");
-        Call<UserDTO> registerCall = userApiService.registerUser(userDTO);
+        Call<UserDTO> registerCall = userApi.registerUser(userDTO);
         registerCall.enqueue(new Callback<UserDTO>() {
             @Override
             public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
                 progressInd.dismiss();
-                if(response.isSuccessful() && response.body().getFbId().equals(userDTO.getFbId())) {
+                if(response.isSuccessful() && response.body() != null && response.body().getFbId().equals(userDTO.getFbId())) {
                     Toast.makeText(MainActivity.this, "Welcome to The Social Playlist!", Toast.LENGTH_SHORT).show();
                     setUserDTO(response.body());
+                    updateUserProfile(getUserDTO());
                 } else {
                     Toast.makeText(MainActivity.this, "Registration failed. Please restart your app", Toast.LENGTH_LONG).show();
                 }
@@ -170,27 +185,5 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Registration failed due to some technical error. Please restart your app", Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private List<UserDTO> getFriendsList(String friendsList) {
-        JSONArray friendsListJsonArray = null;
-        try {
-            friendsListJsonArray = new JSONArray(friendsList);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.i("Friends List: ", friendsListJsonArray.toString());
-        List<UserDTO> friends = new ArrayList<>();
-        for(int i=0; i<friendsListJsonArray.length(); i++) {
-            try {
-                JSONObject friend = friendsListJsonArray.getJSONObject(i);
-                UserDTO usr = new UserDTO();
-                usr.setName(friend.getString("name"));
-                friends.add(usr);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return friends;
     }
 }

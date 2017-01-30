@@ -3,7 +3,8 @@ package com.thesocialplaylist.user.music.dependencyinjection.modules;
 import android.app.Application;
 
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
-import com.thesocialplaylist.user.music.sqlitedbcache.SQLiteCacheManager;
+import com.thesocialplaylist.user.music.sqlitedbcache.dao.ExternalLinksCacheDAO;
+import com.thesocialplaylist.user.music.sqlitedbcache.dao.SongsCacheDAO;
 
 import javax.inject.Singleton;
 
@@ -18,7 +19,7 @@ import dagger.Provides;
 public class MusicLibraryManagerModule {
     @Provides
     @Singleton
-    MusicLibraryManager provideMusicLibraryManager(SQLiteCacheManager sqLiteCacheManager, Application app) {
-        return new MusicLibraryManager(sqLiteCacheManager, app);
+    MusicLibraryManager provideMusicLibraryManager(SongsCacheDAO songsCacheDAO, ExternalLinksCacheDAO externalLinksCacheDAO, Application app) {
+        return new MusicLibraryManager(songsCacheDAO, externalLinksCacheDAO, app);
     }
 }

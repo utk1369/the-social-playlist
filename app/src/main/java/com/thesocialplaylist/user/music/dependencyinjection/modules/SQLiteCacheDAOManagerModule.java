@@ -1,8 +1,8 @@
 package com.thesocialplaylist.user.music.dependencyinjection.modules;
 
-import com.thesocialplaylist.user.music.sqlitedbcache.SQLiteCacheManager;
 import com.thesocialplaylist.user.music.sqlitedbcache.dao.ExternalLinksCacheDAO;
 import com.thesocialplaylist.user.music.sqlitedbcache.dao.SongsCacheDAO;
+import com.thesocialplaylist.user.music.sqlitedbcache.dao.UserRelCacheDAO;
 
 import javax.inject.Singleton;
 
@@ -14,7 +14,7 @@ import dagger.Provides;
  */
 
 @Module
-public class SQLiteCacheManagerModule {
+public class SQLiteCacheDAOManagerModule {
 
     @Provides
     @Singleton
@@ -30,8 +30,7 @@ public class SQLiteCacheManagerModule {
 
     @Provides
     @Singleton
-    SQLiteCacheManager provideSQLiteCacheManager(SongsCacheDAO songsCacheDAO,
-                                                 ExternalLinksCacheDAO externalLinksCacheDAO) {
-        return new SQLiteCacheManager(songsCacheDAO, externalLinksCacheDAO);
+    UserRelCacheDAO provideUserRelCacheDAO() {
+        return new UserRelCacheDAO();
     }
 }

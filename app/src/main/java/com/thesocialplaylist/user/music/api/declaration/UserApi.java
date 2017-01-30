@@ -1,4 +1,4 @@
-package com.thesocialplaylist.user.music.api;
+package com.thesocialplaylist.user.music.api.declaration;
 
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserSearchDTO;

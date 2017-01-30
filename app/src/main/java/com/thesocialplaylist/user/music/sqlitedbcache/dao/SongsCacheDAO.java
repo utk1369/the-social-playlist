@@ -38,6 +38,7 @@ public class SongsCacheDAO {
         return SongsCache.load(SongsCache.class, defaultSongsId);
     }
 
+    //to be removed from production
     public void recreateTable() {
         SQLiteUtils.execSql("DROP TABLE " + TABLE_NAME);
         SQLiteUtils.execSql(SQLiteUtils.createTableDefinition(Cache.getTableInfo(MODEL_CLASS)));

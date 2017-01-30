@@ -26,11 +26,6 @@ import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.dto.SongDTO;
-import com.thesocialplaylist.user.music.sqlitedbcache.SQLiteCacheManager;
-import com.thesocialplaylist.user.music.sqlitedbcache.dao.ExternalLinksCacheDAO;
-import com.thesocialplaylist.user.music.sqlitedbcache.dao.SongsCacheDAO;
-import com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache;
-import com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache;
 import com.thesocialplaylist.user.music.utils.AppUtil;
 
 import java.io.IOException;
