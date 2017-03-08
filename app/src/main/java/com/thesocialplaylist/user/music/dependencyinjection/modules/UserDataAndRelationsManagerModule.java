@@ -1,6 +1,7 @@
 package com.thesocialplaylist.user.music.dependencyinjection.modules;
 
 import com.thesocialplaylist.user.music.api.declaration.UserApi;
+import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.manager.UserDataAndRelationsManager;
 import com.thesocialplaylist.user.music.sqlitedbcache.dao.UserRelCacheDAO;
 
@@ -18,7 +19,7 @@ public class UserDataAndRelationsManagerModule {
 
     @Provides
     @Singleton
-    public UserDataAndRelationsManager provideUserDataAndRelationsManager(UserApi userApi, UserRelCacheDAO userRelCacheDAO) {
-        return new UserDataAndRelationsManager(userApi, userRelCacheDAO);
+    public UserDataAndRelationsManager provideUserDataAndRelationsManager(UserApi userApi, UserRelCacheDAO userRelCacheDAO, MusicLibraryManager musicLibraryManager) {
+        return new UserDataAndRelationsManager(userApi, userRelCacheDAO, musicLibraryManager);
     }
 }

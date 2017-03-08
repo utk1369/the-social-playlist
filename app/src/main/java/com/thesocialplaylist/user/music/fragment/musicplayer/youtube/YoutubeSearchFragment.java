@@ -1,6 +1,7 @@
 package com.thesocialplaylist.user.music.fragment.musicplayer.youtube;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.google.api.services.youtube.model.SearchResult;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
+import com.thesocialplaylist.user.music.activity.MainActivity;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.enums.ExternalLinkType;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
@@ -55,6 +57,8 @@ public class YoutubeSearchFragment extends Fragment {
 
     @Inject
     MusicLibraryManager musicLibraryManager;
+
+    private ProgressDialog loading;
 
     public YoutubeSearchFragment() {
         // Required empty public constructor
@@ -116,6 +120,12 @@ public class YoutubeSearchFragment extends Fragment {
     private class SearchOnYoutube extends AsyncTask<YouTube.Search.List, Void, SearchListResponse> {
 
         @Override
+        protected void onPreExecute() {
+            loading = ProgressDialog.show(getActivity(), "Please wait", "Searching for youtube links");
+        }
+
+
+        @Override
         protected SearchListResponse doInBackground(YouTube.Search.List... params) {
             YouTube.Search.List query = params[0];
             try {
@@ -128,6 +138,7 @@ public class YoutubeSearchFragment extends Fragment {
 
         @Override
         protected void onPostExecute(SearchListResponse response) {
+            loading.dismiss();
             displaySearchResults(response.getItems());
         }
     }

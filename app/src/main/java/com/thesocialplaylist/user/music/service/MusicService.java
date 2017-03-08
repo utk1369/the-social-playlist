@@ -99,8 +99,6 @@ public class MusicService extends Service
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        //register subscribers
-        EventBus.getDefault().register(this);
         return mediaPlayerBinder;
     }
 
@@ -108,8 +106,6 @@ public class MusicService extends Service
     public boolean onUnbind(Intent intent){
         //mediaPlayer.stop();
         //mediaPlayer.release();
-        //unregister subscribers
-        EventBus.getDefault().unregister(this);
         Log.i("Unbinding Service", "");
         return false;
     }
@@ -226,17 +222,5 @@ public class MusicService extends Service
         int n = nowPlayingList.size();
         currentPlayingPosition = ((currentPlayingPosition - 1) + n) % n;
         playSong(getNowPlayingList(), currentPlayingPosition);
-    }
-
-    //Event Subscribers
-    @Subscribe(threadMode =  ThreadMode.BACKGROUND)
-    public void onTrackChange(TrackPlaybackEvent trackPlaybackEvent) {
-        if(trackPlaybackEvent.getPlaybackEvent().equals(PlaybackEvent.NEW_TRACK)) {
-            SongDTO songDTO = trackPlaybackEvent.getSongDTO();
-            songDTO.setLastListenedAt(new Timestamp(System.currentTimeMillis()));
-            songDTO.setHits(songDTO.getHits() == null ? 1 : (songDTO.getHits() + 1));
-            musicLibraryManager.saveSongDetailsToCache(songDTO);
-            Log.i("Saved", songDTO.getMetadata().getTitle());
-        }
     }
 }

@@ -1,6 +1,7 @@
 package com.thesocialplaylist.user.music.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,28 +11,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.thesocialplaylist.user.music.dto.UserDTO;
-import com.thesocialplaylist.user.music.recyclerview.adapters.FriendsListAdapter;
 import com.thesocialplaylist.user.music.R;
+import com.thesocialplaylist.user.music.activity.UserProfileActivity;
+import com.thesocialplaylist.user.music.dto.FriendDTO;
+import com.thesocialplaylist.user.music.recyclerview.adapters.FriendsListAdapter;
+import com.thesocialplaylist.user.music.recyclerview.adapters.OnRecyclerItemClickListener;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FriendsList#newInstance} factory method to
+ * Use the {@link FriendsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FriendsList extends Fragment {
+public class FriendsListFragment extends Fragment {
 
     private static final String ARG_FRIENDS_LIST = "FRIENDS_LIST";
 
-    private List<UserDTO> friendsList;
+    private List<FriendDTO> friendsList;
     private RecyclerView friendsListRecyclerView;
     private View fragmentView;
     private Context appContext;
+    private FriendsListAdapter adapter;
 
-    public FriendsList() {
+    public FriendsListFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +44,11 @@ public class FriendsList extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param friendsList List of friends passed from the activity.
-     * @return A new instance of fragment FriendsList.
+     * @return A new instance of fragment FriendsListFragment.
      */
 
-    public static FriendsList newInstance(List<UserDTO> friendsList) {
-        FriendsList fragment = new FriendsList();
+    public static FriendsListFragment newInstance(List<FriendDTO> friendsList) {
+        FriendsListFragment fragment = new FriendsListFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRIENDS_LIST, (Serializable) friendsList);
         fragment.setArguments(args);
@@ -55,8 +59,7 @@ public class FriendsList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            friendsList = (List<UserDTO>) getArguments().getSerializable(ARG_FRIENDS_LIST);
-            Log.i("Frm FriendsListFragment", friendsList.get(0).getName());
+            friendsList = (List<FriendDTO>) getArguments().getSerializable(ARG_FRIENDS_LIST);
         }
     }
 
@@ -72,7 +75,16 @@ public class FriendsList extends Fragment {
         friendsListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.friends_list);
         appContext = getActivity().getApplicationContext();
 
-        FriendsListAdapter adapter = new FriendsListAdapter(friendsList, appContext);
+        adapter = new FriendsListAdapter(friendsList, appContext);
+        adapter.setFriendsListItemClickListener(new OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent userProfileIntent = new Intent(appContext, UserProfileActivity.class);
+                userProfileIntent.putExtra("USER_ID", friendsList.get(position).getFriend().getId());
+                startActivity(userProfileIntent);
+
+            }
+        });
         friendsListRecyclerView.setAdapter(adapter);
 
         LinearLayoutManager friendsListLayoutManager = new LinearLayoutManager(appContext);

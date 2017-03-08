@@ -22,4 +22,8 @@
     <string name="title_activity_playlist">PlaylistActivity</string>
     <string name="title_activity_music_library">MusicLibraryActivity</string>
     <string name="title_activity_youtube_player">YoutubePlayer</string>
+
+    <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

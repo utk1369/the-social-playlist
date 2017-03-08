@@ -3,11 +3,9 @@ package com.thesocialplaylist.user.music.dto.builders;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.SongMetadataDTO;
-import com.thesocialplaylist.user.music.dto.extractors.ExternalLinksDTOExtractor;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +27,12 @@ public class SongDTOBuilder {
             for(ExternalLinksCache externalLinksCache: externalLinksCacheList) {
                 externalLinksDTOs.add(ExternalLinksDTOBuilder.populate(externalLinksCache));
             }
-            songDTO.setExternalLinksDTOs(externalLinksDTOs);
+            songDTO.setExternalLinks(externalLinksDTOs);
             //convert songsCache Timestamp to store unix timestamps in Long format
             //songDTO.setLastListenedAt(new Timestamp(songsCache.getLastListenedAt()));
         }
         songDTO.setMetadata(songMetadataDTO);
-        songDTO.setId(songMetadataDTO.getSongId());
+        songDTO.setId(songMetadataDTO.getId());
         return songDTO;
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -52,8 +53,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private List<SongDTO> songsList;
     private ActionBar actionBar;
     private Toolbar toolbar;
-    private ImageView youtubeThumbnail;
-    private TextView youtubeTitle;
+    private ImageButton searchBtn;
+    //private ImageView youtubeThumbnail;
+    //private TextView youtubeTitle;
 
     private MusicService musicService;
     private Intent musicSrvIntent;
@@ -90,8 +92,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
         nowPlayingPlaylistBtn = (ImageButton) findViewById(R.id.playlist);
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
         songTitle.setSelected(true);
-        youtubeThumbnail = (ImageView) findViewById(R.id.youtube_thumbnail);
-        youtubeTitle = (TextView) findViewById(R.id.youtube_title);
+        //searchBtn = (ImageButton) findViewById(R.id.search_btn);
+        /*Picasso.with(getApplicationContext())
+                .load(R.drawable.ic_search_black_36dp)
+                .into(searchBtn);*/
+        //youtubeThumbnail = (ImageView) findViewById(R.id.youtube_thumbnail);
+        //youtubeTitle = (TextView) findViewById(R.id.youtube_title);
 
         toolbar = (Toolbar) findViewById(R.id.media_player_toolbar);
         setSupportActionBar(toolbar);
@@ -186,15 +192,15 @@ public class MediaPlayerActivity extends AppCompatActivity {
             }
         });
 
-        youtubeThumbnail.setOnClickListener(new View.OnClickListener() {
+       /* searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent youtubeLinkIntent = new Intent(getApplicationContext(), YoutubeLinker.class);
+                *//*Intent youtubeLinkIntent = new Intent(getApplicationContext(), YoutubeLinker.class);
                 youtubeLinkIntent.putExtra("KEYWORD",
                         nowPlaying.getMetadata().getTitle()
                                 + "+" + nowPlaying.getMetadata().getArtist());
                 youtubeLinkIntent.putExtra("SONG_ID", nowPlaying.getId());
-                List<ExternalLinksDTO> externalLinksDTOs = nowPlaying.getExternalLinksDTOs();
+                List<ExternalLinksDTO> externalLinksDTOs = nowPlaying.getExternalLinks();
                 if(externalLinksDTOs != null) {
                     for(ExternalLinksDTO externalLinksDTO: externalLinksDTOs) {
                         if(externalLinksDTO.getLinkType().equals(ExternalLinkType.YOUTUBE)) {
@@ -203,9 +209,15 @@ public class MediaPlayerActivity extends AppCompatActivity {
                         }
                     }
                 }
-                startActivity(youtubeLinkIntent);
+                startActivity(youtubeLinkIntent);*//*
+                //Snackbar.make()
+                Intent intent = new Intent(Intent.ACTION_SEARCH);
+                intent.setPackage("com.google.android.youtube");
+                intent.putExtra("query", nowPlaying.getMetadata().getTitle() + " " + nowPlaying.getMetadata().getArtist());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
-        });
+        });*/
     }
 
     private void populateSongAttributes(int position) {
@@ -215,15 +227,15 @@ public class MediaPlayerActivity extends AppCompatActivity {
             return;
         }
 
-        nowPlaying = musicLibraryManager.getSongDetails(songsList.get(position).getMetadata().getSongId());
+        nowPlaying = musicLibraryManager.getSongDetails(songsList.get(position).getMetadata().getId());
         songTitle.setText(nowPlaying.getMetadata().getTitle());
         artist.setText(nowPlaying.getMetadata().getArtist());
 
         Log.i("MediaPlayer", "Hits: " + nowPlaying.getHits());
-        Log.i("MediaPlayer", "Song Id: " + nowPlaying.getMetadata().getSongId());
+        Log.i("MediaPlayer", "Song Id: " + nowPlaying.getMetadata().getId());
 
-        List<ExternalLinksDTO> externalLinksDTOs = nowPlaying.getExternalLinksDTOs();
-        if(externalLinksDTOs != null && externalLinksDTOs.size() > 0) {
+        List<ExternalLinksDTO> externalLinksDTOs = nowPlaying.getExternalLinks();
+        /*if(externalLinksDTOs != null && externalLinksDTOs.size() > 0) {
             for(ExternalLinksDTO externalLinksDTO: externalLinksDTOs) {
                 if(externalLinksDTO.getLinkType().equals(ExternalLinkType.YOUTUBE)) {
                     youtubeTitle.setText(externalLinksDTO.getTitle());
@@ -241,7 +253,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
                     .load(R.drawable.ic_equalizer_white_24dp)
                     .error(R.drawable.ic_equalizer_white_24dp)
                     .into(youtubeThumbnail);
-        }
+        }*/
         //album.setText("");
         AppUtil.loadAlbumArt(getApplicationContext(), nowPlaying.getMetadata().getAlbumId(), thumbnail);
 

@@ -1,5 +1,6 @@
 package com.thesocialplaylist.user.music;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -13,8 +14,11 @@ import java.util.List;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> fragmentList = new ArrayList<>();
     private final List<String> fragmentTitle = new ArrayList<>();
-    public ViewPagerAdapter(FragmentManager fm) {
+    private Context mContext;
+
+    public ViewPagerAdapter(FragmentManager fm, Context mContext) {
         super(fm);
+        this.mContext = mContext;
     }
 
     @Override

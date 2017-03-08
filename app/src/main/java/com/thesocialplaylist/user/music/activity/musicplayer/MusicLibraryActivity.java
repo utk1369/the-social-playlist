@@ -73,7 +73,7 @@ public class MusicLibraryActivity extends AppCompatActivity {
     }
 
     private ViewPagerAdapter getViewPagerAdapter() {
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), MusicLibraryActivity.this);
         viewPagerAdapter.addFragment(TracksListFragment.newInstance(
                 musicLibraryManager.getAllSongs(), TracksListMode.MUSIC_PLAYER_MODE), "Songs");
         viewPagerAdapter.addFragment(new AlbumsGridFragment(), "Albums");

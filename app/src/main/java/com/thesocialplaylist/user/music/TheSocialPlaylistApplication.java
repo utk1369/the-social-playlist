@@ -49,6 +49,7 @@ public class TheSocialPlaylistApplication extends Application {
         userDataAndRelationsManagerComponent = DaggerUserDataAndRelationsManagerComponent
                 .builder()
                 .retrofitModule(new RetrofitModule(BASE_URL))
+                .appModule(new AppModule(this))
                 .build();
 
         ActiveAndroid.initialize(this);

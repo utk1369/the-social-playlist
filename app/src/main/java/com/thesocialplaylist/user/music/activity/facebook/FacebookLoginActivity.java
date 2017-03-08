@@ -11,8 +11,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thesocialplaylist.user.music.activity.MainActivity;
-import com.thesocialplaylist.user.music.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -25,13 +23,15 @@ import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.thesocialplaylist.user.music.R;
+import com.thesocialplaylist.user.music.activity.MainActivity;
+import com.thesocialplaylist.user.music.dto.FriendDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -90,19 +90,25 @@ public class FacebookLoginActivity extends Activity {
                 Log.i("User Name", profile.getName());
                 Log.i("Access Token", loginResult.getAccessToken().getToken());
                 Log.i("Permissions", String.valueOf(AccessToken.getCurrentAccessToken().getPermissions()));
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name");
 
-                new GraphRequest(loginResult.getAccessToken(), "/me/friends", null, HttpMethod.GET,
+                new GraphRequest(loginResult.getAccessToken(), "/me/friends", parameters, HttpMethod.GET,
                         new GraphRequest.Callback() {
                             @Override
                             public void onCompleted(GraphResponse response) {
                                 Intent intent = new Intent(FacebookLoginActivity.this, MainActivity.class);
-                                List<UserDTO> friends = getFriendsList(response);
-                                intent.putExtra("FRIENDS_LIST", (Serializable) friends);
-                                intent.putExtra("FB_USER_ID", profile.getId());
-                                intent.putExtra("FB_USER_NAME", profile.getName());
-                                intent.putExtra("accessToken", loginResult.getAccessToken().getToken());
+                                List<FriendDTO> friends = getFriendsList(response);
+
+                                UserDTO userDTO = new UserDTO();
+                                userDTO.setFbId(profile.getId());
+                                userDTO.setName(profile.getName());
+                                userDTO.setImageUrl(profile.getProfilePictureUri(500,500).toString());
+                                userDTO.setFriends(friends);
+
+                                intent.putExtra("USER_FB_DETAILS", userDTO);
                                 startActivity(intent);
-                                finish(); //finish the activity so that the user doesnt get back to the login screen
+                                finish(); //finish the activity so that the user doesn't get back to the login screen
                             }
                         }).executeAsync();
             }
@@ -120,7 +126,7 @@ public class FacebookLoginActivity extends Activity {
         });
     }
 
-    private List<UserDTO> getFriendsList(GraphResponse response) {
+    private List<FriendDTO> getFriendsList(GraphResponse response) {
 
         JSONObject jsonResponse = null;
         try {
@@ -136,19 +142,26 @@ public class FacebookLoginActivity extends Activity {
         }
 
         Log.i("Friends List: ", friends.toString());
-        List<UserDTO> friendsDTOs = new ArrayList<>();
-        for(int i=0; i<friends.length(); i++) {
+        List<FriendDTO> friendsList = new ArrayList<>();
+
+        if(friends == null)
+            return friendsList;
+
+        for(int i = 0; i < friends.length(); i++) {
             try {
                 JSONObject friend = friends.getJSONObject(i);
-                UserDTO usr = new UserDTO();
-                usr.setName(friend.getString("name"));
-                usr.setFbId(friend.getString("id"));
-                friendsDTOs.add(usr);
+                FriendDTO friendDTO = new FriendDTO();
+                UserDTO userDTO = new UserDTO();
+                userDTO.setFbId(friend.getString("id"));
+                userDTO.setName(friend.getString("name"));
+                friendDTO.setFriend(userDTO);
+                friendDTO.setFbId(friend.getString("id"));
+                friendsList.add(friendDTO);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return friendsDTOs;
+        return friendsList;
     }
 
 }

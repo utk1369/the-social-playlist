@@ -7,4 +7,6 @@
     <color name="defaultCardBg">#F0F0F0</color>
     <color name="primaryTextColor">#212121</color>
     <color name="secondaryTextColor">#727272</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

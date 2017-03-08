@@ -14,6 +14,10 @@ import java.util.List;
 
 public class UserRelCacheDAO {
 
+    public UserRelCache getUserRelCacheByDefaultId(Long defaultUserRelId) {
+        return UserRelCache.load(UserRelCache.class, defaultUserRelId);
+    }
+
     public List<UserRelCache> getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES relTp) {
         return new Select().from(UserRelCache.class).where(" rel_tp = ?", relTp).execute();
     }

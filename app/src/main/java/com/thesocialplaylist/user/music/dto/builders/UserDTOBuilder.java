@@ -20,6 +20,10 @@ public class UserDTOBuilder {
                 userDTO.setStatus(userRelCache.getValue());
             if (userRelCache.getTypeCd().equals(UserRelCache.TYPE_CODES.IMAGE_URL))
                 userDTO.setImageUrl(userRelCache.getValue());
+            if(userDTO.getFbId() == null)
+                userDTO.setFbId(userRelCache.getFbId());
+            if(userDTO.getId() == null)
+                userDTO.setId(userRelCache.getUserId());
         }
         return userDTO;
     }

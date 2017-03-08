@@ -22,9 +22,9 @@ public class UserDTO implements Serializable {
 
     private String imageUrl;
 
-    private List<UserDTO> friends; //should be list of UserDTOs
+    private List<FriendDTO> friends; //should be list of UserDTOs
 
-    private List<SongDTO> songDTOs;
+    private List<SongDTO> songs;
 
     private List<SocialActivityDTO> socialActivities;
 
@@ -72,20 +72,20 @@ public class UserDTO implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public List<UserDTO> getFriends() {
+    public List<FriendDTO> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<UserDTO> friends) {
+    public void setFriends(List<FriendDTO> friends) {
         this.friends = friends;
     }
 
-    public List<SongDTO> getSongDTOs() {
-        return songDTOs;
+    public List<SongDTO> getSongs() {
+        return songs;
     }
 
-    public void setSongDTOs(List<SongDTO> songDTOs) {
-        this.songDTOs = songDTOs;
+    public void setSongs(List<SongDTO> songs) {
+        this.songs = songs;
     }
 
     public List<SocialActivityDTO> getSocialActivities() {
@@ -121,7 +121,7 @@ public class UserDTO implements Serializable {
                 ", status='" + status + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", friends=" + friends +
-                ", songDTOs=" + songDTOs +
+                ", songs=" + songs +
                 ", socialActivities=" + socialActivities +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

@@ -30,12 +30,21 @@ public class SongsCacheDAO {
         return new Select().from(SongsCache.class).execute();
     }
 
-    public SongsCache getSongById(String songId) {
-        return new Select().from(SongsCache.class).where(" song_id = ?", songId).executeSingle();
+    public SongsCache getOneSongForGivenClause(String clause, Object... args) {
+        //recreateTable();
+        return new Select().from(SongsCache.class).where(clause, args).executeSingle();
+    }
+
+    public List<SongsCache> getAllSongsForGivenClause(String clause, Object... args) {
+        return new Select().from(SongsCache.class).where(clause, args).execute();
     }
 
     public SongsCache getSongCacheByDefaultId(Long defaultSongsId) {
         return SongsCache.load(SongsCache.class, defaultSongsId);
+    }
+
+    public void updateSongsCache(String fieldToSet, Object updateVal, String clause, Object... args) {
+        new Update(SongsCache.class).set(fieldToSet, updateVal).where(clause, args).execute();
     }
 
     //to be removed from production

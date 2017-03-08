@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,7 +18,7 @@
     <RelativeLayout
         android:layout_weight="7.75"
         android:layout_width="0sp"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:padding="@dimen/default_track_list_row_padding">
         <TextView
             android:id="@+id/track_title"
@@ -39,10 +40,16 @@
             android:layout_height="wrap_content"
             android:text="Artist"
             android:fontFamily="sans-serif-light"
-            android:textStyle="italic"
             android:textSize="12sp"
             android:singleLine="true"
             android:ellipsize="marquee"/>
+
+        <ImageView
+            android:id="@+id/youtube_link_flag"
+            android:layout_marginTop="4sp"
+            android:layout_width="16sp"
+            android:layout_height="16sp"
+            android:layout_below="@id/track_artist"/>
     </RelativeLayout>
 
     <ImageButton

@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
@@ -35,8 +37,11 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
     private int selectedRow; // for music player mode
     private TracksListMode mode;
 
-    @Inject
-    MusicLibraryManager musicLibraryManager;
+    private OnRecyclerItemClickListener mListener;
+
+    public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener listener) {
+        this.mListener = listener;
+    }
 
     public int getSelectedRow() {
         return selectedRow;
@@ -73,15 +78,6 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
         }
     }
 
-    public interface OnRecyclerItemClickListener {
-        void onItemClick(View view, int position);
-    }
-    private OnRecyclerItemClickListener mListener;
-
-    public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener listener) {
-        this.mListener = listener;
-    }
-
     public TracksListAdapter(List<SongDTO> tracksList, TracksListMode mode, Context context) {
         this.tracksList = tracksList;
         this.appContext = context;
@@ -98,13 +94,30 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
         final SongDTO track = tracksList.get(position);
         holder.trackTitle.setText(track.getMetadata().getTitle());
         holder.trackArtist.setText(track.getMetadata().getArtist());
-        AppUtil.loadAlbumArt(appContext, track.getMetadata().getAlbumId(), holder.thumbnail);
+        if(mode.equals(TracksListMode.USER_PROFILE_MODE)) {
+            AppUtil.loadImageUsingPicasso(appContext, null, holder.thumbnail,
+                    AppUtil.getDrawableResource(appContext, R.drawable.ic_headset_black_36dp, appContext.getTheme()),
+                    AppUtil.getDrawableResource(appContext, R.drawable.ic_headset_black_36dp, appContext.getTheme()));
+        } else {
+            AppUtil.loadAlbumArt(appContext, track.getMetadata().getAlbumId(), holder.thumbnail);
+        }
         Boolean selectionCriteria = false;
-        if(mode == TracksListMode.MUSIC_PLAYER_MODE)
+        if(mode.equals(TracksListMode.MUSIC_PLAYER_MODE))
             selectionCriteria = (position == selectedRow);
-        else if(mode == TracksListMode.PLAYLIST_MODE)
+        else if(mode.equals(TracksListMode.PLAYLIST_MODE))
             selectionCriteria = (selectedRows != null && selectedRows.contains(position));
         highlightRow(holder.itemView, selectionCriteria);
+        if(track.getExternalLinks() != null && track.getExternalLinks().size() > 0) {
+            Picasso.with(appContext)
+                    .load(R.drawable.youtube_128)
+                    .fit()
+                    .into(holder.youtubeLinkFlag);
+        } else {
+            Picasso.with(appContext)
+                    .load(R.drawable.ic_audiotrack_black_24dp)
+                    .fit()
+                    .into(holder.youtubeLinkFlag);
+        }
     }
 
     @Override
@@ -117,6 +130,7 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
         private TextView trackTitle;
         private TextView trackArtist;
         private ImageButton options;
+        private ImageView youtubeLinkFlag;
 
         public TrackRowHolder(final View itemView) {
             super(itemView);
@@ -124,6 +138,7 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
             trackTitle = (TextView) itemView.findViewById(R.id.track_title);
             trackArtist = (TextView) itemView.findViewById(R.id.track_artist);
+            youtubeLinkFlag = (ImageView) itemView.findViewById(R.id.youtube_link_flag);
             options = (ImageButton) itemView.findViewById(R.id.options);
             options.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,7 +171,7 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
                             tracksList.get(getAdapterPosition()).getMetadata().getTitle()
                                     + "+" + tracksList.get(getAdapterPosition()).getMetadata().getArtist());
                     youtubeLinkIntent.putExtra("SONG_ID", tracksList.get(getAdapterPosition()).getId());
-                    List<ExternalLinksDTO> externalLinksDTOs = tracksList.get(getAdapterPosition()).getExternalLinksDTOs();
+                    List<ExternalLinksDTO> externalLinksDTOs = tracksList.get(getAdapterPosition()).getExternalLinks();
                     if(externalLinksDTOs != null) {
                         for(ExternalLinksDTO externalLinksDTO: externalLinksDTOs) {
                             if(externalLinksDTO.getLinkType().equals(ExternalLinkType.YOUTUBE)) {

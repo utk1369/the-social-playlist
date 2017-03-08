@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class SongMetadataDTO implements Serializable {
 
-    private String songId;
+    private String id;
 
     private String title;
 
@@ -19,12 +19,12 @@ public class SongMetadataDTO implements Serializable {
 
     private String data;
 
-    public String getSongId() {
-        return songId;
+    public String getId() {
+        return id;
     }
 
-    public void setSongId(String songId) {
-        this.songId = songId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {

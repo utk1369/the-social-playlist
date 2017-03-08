@@ -65,8 +65,8 @@ public class AppUtil {
     public static void loadAlbumArt(Context context, long albumId, ImageView albumArtImageView) {
         loadImageUsingPicasso(context, getAlbumArtUri(albumId),
                 albumArtImageView,
-                AppUtil.getDrawableResource(context, R.drawable.ic_audiotrack_black_48dp, context.getTheme()),
-                AppUtil.getDrawableResource(context, R.drawable.ic_audiotrack_black_48dp, context.getTheme())
+                AppUtil.getDrawableResource(context, R.drawable.ic_headset_black_36dp, context.getTheme()),
+                AppUtil.getDrawableResource(context, R.drawable.ic_headset_black_36dp, context.getTheme())
         );
     }
 }

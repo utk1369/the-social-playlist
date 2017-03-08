@@ -13,6 +13,7 @@ import android.content.Context;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
+import com.thesocialplaylist.user.music.recyclerview.adapters.OnRecyclerItemClickListener;
 import com.thesocialplaylist.user.music.recyclerview.adapters.TracksListAdapter;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
@@ -45,7 +46,7 @@ public class TracksListFragment extends Fragment {
     private static final String TRACKS_LIST_KEY = "tracksList";
     private static final String TRACKS_LIST_MODE_KEY = "tracksListMode";
 
-    private class musicPlayerModeOnClickListener implements TracksListAdapter.OnRecyclerItemClickListener {
+    private class musicPlayerModeOnClickListener implements OnRecyclerItemClickListener {
         @Override
         public void onItemClick(View view, int position) {
             musicService.setCurrentPlayingPosition(position);
@@ -119,7 +120,9 @@ public class TracksListFragment extends Fragment {
         Log.i("From fragment", tracks.size() + "");
         appContext = getActivity().getApplicationContext();
         adapter = new TracksListAdapter(tracks, mode, getActivity().getApplicationContext());
-        adapter.setOnRecyclerItemClickListener(new musicPlayerModeOnClickListener());
+
+        if(mode.equals(TracksListMode.MUSIC_PLAYER_MODE))
+            adapter.setOnRecyclerItemClickListener(new musicPlayerModeOnClickListener());
 
         tracksList = (RecyclerView) fragmentView.findViewById(R.id.tracks_list);
         tracksList.setHasFixedSize(true);

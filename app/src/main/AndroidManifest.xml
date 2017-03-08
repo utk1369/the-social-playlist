@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="com.thesocialplaylist.user.music.TheSocialPlaylistApplication"
+        android:name=".TheSocialPlaylistApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_library_music_black_24dp"
         android:label="@string/app_name"
@@ -22,27 +22,24 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="the_social_playlist_cache.db"/>
-
+            android:value="the_social_playlist_cache.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="5"/>
-
+            android:value="6" />
         <meta-data
             android:name="AA_MODELS"
             android:value="com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache,
-                com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,
-                com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
+                             com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,
+                             com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            tools:replace="android:theme"/>
+            tools:replace="android:theme" />
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
@@ -54,11 +51,10 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.facebook.FetchContactDetails"
+            android:name=".activity.facebook.FetchContactDetails"
             android:label="@string/title_activity_fetch_contact_details" />
-
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.musicplayer.MediaPlayerActivity"
+            android:name=".activity.musicplayer.MediaPlayerActivity"
             android:label="@string/title_activity_media_player">
 
             <!--
@@ -70,7 +66,7 @@
             -->
         </activity>
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.facebook.FacebookLoginActivity"
+            android:name=".activity.facebook.FacebookLoginActivity"
             android:label="@string/title_activity_facebook_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,28 +75,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main" />
 
         <service
-            android:name="com.thesocialplaylist.user.music.service.MusicService"
+            android:name=".service.MusicService"
             android:stopWithTask="true" />
 
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.musicplayer.PlaylistActivity"
+            android:name=".activity.musicplayer.PlaylistActivity"
             android:label="@string/title_activity_playlist"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.musicplayer.MusicLibraryActivity"
+            android:name=".activity.musicplayer.MusicLibraryActivity"
             android:label="@string/title_activity_music_library"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.musicplayer.AlbumDetailsActivity"
+            android:name=".activity.musicplayer.AlbumDetailsActivity"
             android:label="Album Details"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker"
+            android:name=".activity.musicplayer.youtube.YoutubeLinker"
             android:label="@string/title_activity_youtube_player"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.UserProfileActivity"
+            android:label="@string/title_activity_user_profile"
             android:theme="@style/AppTheme"></activity>
     </application>
 

@@ -2,7 +2,6 @@ package com.thesocialplaylist.user.music.dto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,7 +14,7 @@ public class SongDTO implements Serializable{
 
     private SongMetadataDTO metadata;
 
-    private List<ExternalLinksDTO> externalLinksDTOs;
+    private List<ExternalLinksDTO> externalLinks;
 
     private Integer hits;
 
@@ -24,6 +23,8 @@ public class SongDTO implements Serializable{
     private List<String> likes;
 
     private Double rating;
+
+    private List<SocialActivityDTO> socialActivities;
 
     public String getId() {
         return id;
@@ -41,12 +42,12 @@ public class SongDTO implements Serializable{
         this.metadata = metadata;
     }
 
-    public List<ExternalLinksDTO> getExternalLinksDTOs() {
-        return externalLinksDTOs;
+    public List<ExternalLinksDTO> getExternalLinks() {
+        return externalLinks;
     }
 
-    public void setExternalLinksDTOs(List<ExternalLinksDTO> externalLinksDTOs) {
-        this.externalLinksDTOs = externalLinksDTOs;
+    public void setExternalLinks(List<ExternalLinksDTO> externalLinks) {
+        this.externalLinks = externalLinks;
     }
 
     public Timestamp getLastListenedAt() {
@@ -79,5 +80,13 @@ public class SongDTO implements Serializable{
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public List<SocialActivityDTO> getSocialActivities() {
+        return socialActivities;
+    }
+
+    public void setSocialActivities(List<SocialActivityDTO> socialActivities) {
+        this.socialActivities = socialActivities;
     }
 }

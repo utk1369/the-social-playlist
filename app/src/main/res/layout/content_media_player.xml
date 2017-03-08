@@ -9,8 +9,6 @@
 
     <include layout="@layout/card_player_action_buttons"/>
 
-    <include layout="@layout/card_youtube_link"/>
-
     <include layout="@layout/card_social_network_buttons"/>
 
 </LinearLayout>
