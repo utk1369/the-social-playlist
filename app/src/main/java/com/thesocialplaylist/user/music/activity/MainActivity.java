@@ -4,12 +4,12 @@ package com.thesocialplaylist.user.music.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Feed");
-        viewPagerAdapter.addFragment(FriendsListFragment.newInstance(getUserDTO().getFriends()), "Friends");
+        viewPagerAdapter.addFragment(FriendsListFragment.newInstance(getUserDTO().getFriends(), LinearLayoutManager.VERTICAL), "Friends");
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Notifications");
         return viewPagerAdapter;
     }
@@ -161,14 +161,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login(final UserDTO userDetails) {
-        //final ProgressDialog loading = ProgressDialog.show(MainActivity.this, "Please wait", "Refreshing your screen");
-        Snackbar.make(drawerLayout, "Refreshing your screen...", Snackbar.LENGTH_LONG)
-                .setAction("Dismiss", null).show();
+        final ProgressDialog loading = ProgressDialog.show(MainActivity.this, "Please wait", "Refreshing your screen");
         UserLoginRequestDTO userLoginRequestDTO = new UserLoginRequestDTO(userDetails, Arrays.asList(new PopulateDTO("friends.friend", "name fbId imageUrl status")));
         Call<UserDTO> loginCall = userApi.login(true, userLoginRequestDTO);
         loginCall.enqueue(new Callback<UserDTO>() {
             @Override
             public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                loading.dismiss();
                 if(response.isSuccessful() && response.body() != null) {
                     updateAndRefreshUserDetails(response.body());
                     Log.i("LOGIN", "User found: " + getUserDTO().getId());
@@ -178,6 +177,8 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<UserDTO> call, Throwable t) {
+                loading.dismiss();
+
                 Log.e("Search call failed for ", userDetails.getFbId() + "[" + t.getMessage() + "]");
             }
         });

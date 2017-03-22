@@ -2,6 +2,7 @@ package com.thesocialplaylist.user.music.dependencyinjection.components;
 
 import com.thesocialplaylist.user.music.activity.MainActivity;
 import com.thesocialplaylist.user.music.activity.UserProfileActivity;
+import com.thesocialplaylist.user.music.activity.musicplayer.SongShareActivity;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.AppModule;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.MusicLibraryManagerModule;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.RetrofitModule;
@@ -32,4 +33,5 @@ import dagger.Component;
 public interface UserDataAndRelationsManagerComponent {
     void inject(MainActivity mainActivity);
     void inject(UserProfileActivity userProfileActivity);
+    void inject(SongShareActivity songShareActivity);
 }

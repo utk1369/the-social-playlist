@@ -30,9 +30,7 @@
             android:value="6" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache,
-                             com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,
-                             com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
+            android:value="com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache,                              com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,                              com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -101,7 +99,12 @@
         <activity
             android:name=".activity.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.musicplayer.SongShareActivity"
+            android:label="@string/title_activity_song_share"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan"></activity>
     </application>
 
 </manifest>

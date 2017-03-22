@@ -1,5 +1,6 @@
 package com.thesocialplaylist.user.music.api.declaration;
 
+import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserLoginRequestDTO;
@@ -39,4 +40,7 @@ public interface UserApi {
 
     @POST(value = "users/profile/{id}")
     Call<UserDTO> getProfile(@Path(value = "id") String id, @Body UserProfileRequestDTO userProfileRequestDTO);
+
+    @POST(value = "users/activity/save")
+    Call<SongDTO> linkSongToActivity(@Body SocialActivityDTO socialActivityDTO);
 }

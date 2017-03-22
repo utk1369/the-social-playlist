@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.dto.AlbumDTO;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
-import com.thesocialplaylist.user.music.recyclerview.adapters.AlbumGridAdapter;
+import com.thesocialplaylist.user.music.adapters.recyclerview.AlbumGridAdapter;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.activity.musicplayer.AlbumDetailsActivity;
 

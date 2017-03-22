@@ -1,4 +1,4 @@
-package com.thesocialplaylist.user.music.recyclerview.adapters;
+package com.thesocialplaylist.user.music.adapters.recyclerview;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker;
@@ -20,12 +19,9 @@ import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.ExternalLinkType;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
-import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.utils.AppUtil;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Created by user on 13-04-2016.

@@ -113,16 +113,20 @@
                         android:layout_toRightOf="@id/likes"/>
                 </RelativeLayout>
 
-                <RatingBar
-                    android:layout_weight="1"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:id="@+id/rating"
+                <RelativeLayout
                     android:layout_width="0sp"
                     android:layout_height="match_parent"
-                    android:numStars="5"
-                    android:rating="3.5"
-                    android:stepSize="0.5"
-                    android:layout_gravity="center_vertical|center_horizontal"/>
+                    android:layout_weight="1">
+                    <RatingBar
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:id="@+id/rating"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:numStars="5"
+                        android:rating="3"
+                        android:stepSize="1"
+                        android:layout_gravity="center_vertical|center_horizontal"/>
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
 

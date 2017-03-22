@@ -52,8 +52,9 @@ public class MusicLibraryManager {
             metadata.setTitle(cursor.getString(1));
             metadata.setArtist(cursor.getString(3));
             metadata.setDuration(cursor.getString(4));
-            metadata.setAlbumId(Long.parseLong(cursor.getString(6)));
             metadata.setData(cursor.getString(5));
+            metadata.setAlbumId(Long.parseLong(cursor.getString(6)));
+            metadata.setAlbum(cursor.getString(7));
 
             songMetadataDTOs.add(metadata);
         }

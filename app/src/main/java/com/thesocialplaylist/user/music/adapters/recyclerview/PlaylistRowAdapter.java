@@ -1,4 +1,4 @@
-package com.thesocialplaylist.user.music.recyclerview.adapters;
+package com.thesocialplaylist.user.music.adapters.recyclerview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

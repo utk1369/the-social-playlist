@@ -52,24 +52,17 @@ public class YoutubeLinker extends AppCompatActivity implements YoutubeSearchFra
         }
     }
 
-    private void replaceFragments(int containerViewId, Fragment fragmentToReplace) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(containerViewId, fragmentToReplace);
-        fragmentTransaction.commit();
-    }
-
     private void populatePlayerFragment(String videoId) {
         if(videoId == null)
             return;
         YouTubePlayerWindowFragment playerWindowFragment = YouTubePlayerWindowFragment
                 .newInstance(videoId, androidApiKey);
-        replaceFragments(R.id.player_window, playerWindowFragment);
+        AppUtil.replaceFragments(getSupportFragmentManager(), R.id.player_window, playerWindowFragment);
     }
 
     private void populateSearchFragment(Long noOfResults) {
         YoutubeSearchFragment youtubeSearchFragment = YoutubeSearchFragment.newInstance(keyword, noOfResults, browserApiKey);
-        replaceFragments(R.id.search_results, youtubeSearchFragment);
+        AppUtil.replaceFragments(getSupportFragmentManager(), R.id.search_results, youtubeSearchFragment);
     }
 
     private void populateFragments() {

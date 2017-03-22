@@ -7,6 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -68,5 +71,11 @@ public class AppUtil {
                 AppUtil.getDrawableResource(context, R.drawable.ic_headset_black_36dp, context.getTheme()),
                 AppUtil.getDrawableResource(context, R.drawable.ic_headset_black_36dp, context.getTheme())
         );
+    }
+
+    public static void replaceFragments(FragmentManager fragmentManager, int containerViewId, Fragment fragmentToReplace) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(containerViewId, fragmentToReplace);
+        fragmentTransaction.commit();
     }
 }

@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.thesocialplaylist.user.music.recyclerview.adapters.ArtistsListAdapter;
+import com.thesocialplaylist.user.music.adapters.recyclerview.ArtistsListAdapter;
 import com.thesocialplaylist.user.music.R;
 
 import java.util.Arrays;

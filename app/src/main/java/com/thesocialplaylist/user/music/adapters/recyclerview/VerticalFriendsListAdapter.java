@@ -1,35 +1,30 @@
-package com.thesocialplaylist.user.music.recyclerview.adapters;
+package com.thesocialplaylist.user.music.adapters.recyclerview;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.R;
-import com.thesocialplaylist.user.music.activity.UserProfileActivity;
 import com.thesocialplaylist.user.music.dto.FriendDTO;
-import com.thesocialplaylist.user.music.dto.UserDTO;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by user on 26-07-2016.
  */
-public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.FriendsListRowHolder> {
+public class VerticalFriendsListAdapter extends RecyclerView.Adapter<VerticalFriendsListAdapter.FriendsListRowHolder> {
 
     private List<FriendDTO> friendsList;
     private Context appContext;
     private OnRecyclerItemClickListener friendsListItemClickListener;
 
-    public FriendsListAdapter(List<FriendDTO> friendsList, Context context) {
+    public VerticalFriendsListAdapter(List<FriendDTO> friendsList, Context context) {
         this.friendsList = friendsList;
         this.appContext = context;
     }

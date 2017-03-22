@@ -1,15 +1,24 @@
 package com.thesocialplaylist.user.music.dto;
 
+import com.google.gson.annotations.SerializedName;
 import com.thesocialplaylist.user.music.enums.SocialActivityDomain;
 import com.thesocialplaylist.user.music.enums.SocialActivityType;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by user on 06-09-2016.
  */
-public class SocialActivityDTO {
+public class SocialActivityDTO implements Serializable {
+
+    @SerializedName("_id")
+    private String id;
+
+    private String postedBy;
+
+    private String parentActivity;
 
     private SocialActivityType activityType;
 
@@ -17,16 +26,38 @@ public class SocialActivityDTO {
 
     private List<String> recipientUserIds;
 
-    private ExternalLinksDTO externalLinksDTO;
+    private SongMetadataDTO songMetadata;
 
-    private Date timestamp;
+    private List<String> likes;
 
-    public ExternalLinksDTO getExternalLinksDTO() {
-        return externalLinksDTO;
+    private String caption;
+
+    private Date createdAt;
+
+    private Date updatedAt;
+
+    public String getId() {
+        return id;
     }
 
-    public void setExternalLinksDTO(ExternalLinksDTO externalLinksDTO) {
-        this.externalLinksDTO = externalLinksDTO;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPostedBy() {
+        return postedBy;
+    }
+
+    public void setPostedBy(String postedBy) {
+        this.postedBy = postedBy;
+    }
+
+    public String getParentActivity() {
+        return parentActivity;
+    }
+
+    public void setParentActivity(String parentActivity) {
+        this.parentActivity = parentActivity;
     }
 
     public SocialActivityType getActivityType() {
@@ -53,11 +84,43 @@ public class SocialActivityDTO {
         this.recipientUserIds = recipientUserIds;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public SongMetadataDTO getSongMetadata() {
+        return songMetadata;
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setSongMetadata(SongMetadataDTO songMetadata) {
+        this.songMetadata = songMetadata;
+    }
+
+    public List<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

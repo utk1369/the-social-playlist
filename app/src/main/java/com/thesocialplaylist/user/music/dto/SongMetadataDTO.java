@@ -15,6 +15,8 @@ public class SongMetadataDTO implements Serializable {
 
     private Long albumId;
 
+    private String album;
+
     private String duration;
 
     private String data;
@@ -49,6 +51,14 @@ public class SongMetadataDTO implements Serializable {
 
     public void setAlbumId(Long albumId) {
         this.albumId = albumId;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
     }
 
     public String getDuration() {

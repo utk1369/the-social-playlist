@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.thesocialplaylist.user.music.dto.PlaylistDTO;
-import com.thesocialplaylist.user.music.recyclerview.adapters.PlaylistRowAdapter;
+import com.thesocialplaylist.user.music.adapters.recyclerview.PlaylistRowAdapter;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.manager.PlaylistManager;
 

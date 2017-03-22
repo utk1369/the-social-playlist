@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,8 +20,10 @@ import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
+import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
 import com.thesocialplaylist.user.music.enums.ExternalLinkType;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
+import com.thesocialplaylist.user.music.enums.SocialActivityType;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
@@ -54,6 +57,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private Toolbar toolbar;
     private ImageButton searchBtn;
+    private Button dedicateBtn;
     //private ImageView youtubeThumbnail;
     //private TextView youtubeTitle;
 
@@ -91,6 +95,16 @@ public class MediaPlayerActivity extends AppCompatActivity {
         skipPrevBtn = (ImageButton) findViewById(R.id.prev_btn);
         nowPlayingPlaylistBtn = (ImageButton) findViewById(R.id.playlist);
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
+        dedicateBtn = (Button) findViewById(R.id.dedicate);
+        dedicateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent shareIntent = new Intent(MediaPlayerActivity.this, SongShareActivity.class);
+                shareIntent.putExtra("SONG_TO_SHARE", nowPlaying);
+                shareIntent.putExtra("ACTIVITY_TYPE", SocialActivityType.DEDICATE);
+                startActivity(shareIntent);
+            }
+        });
         songTitle.setSelected(true);
         //searchBtn = (ImageButton) findViewById(R.id.search_btn);
         /*Picasso.with(getApplicationContext())
@@ -224,12 +238,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
         if(songsList == null) {
             songTitle.setText("Select a SongDTO!");
             artist.setText("");
+            album.setText("");
             return;
         }
 
         nowPlaying = musicLibraryManager.getSongDetails(songsList.get(position).getMetadata().getId());
         songTitle.setText(nowPlaying.getMetadata().getTitle());
         artist.setText(nowPlaying.getMetadata().getArtist());
+        album.setText(nowPlaying.getMetadata().getAlbum());
 
         Log.i("MediaPlayer", "Hits: " + nowPlaying.getHits());
         Log.i("MediaPlayer", "Song Id: " + nowPlaying.getMetadata().getId());

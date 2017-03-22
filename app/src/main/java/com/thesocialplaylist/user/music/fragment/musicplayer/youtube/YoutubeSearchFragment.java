@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,16 +17,13 @@ import android.widget.Toast;
 import com.google.api.services.youtube.model.SearchResult;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
-import com.thesocialplaylist.user.music.activity.MainActivity;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.enums.ExternalLinkType;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
-import com.thesocialplaylist.user.music.recyclerview.adapters.YouTubeSearchListAdapter;
+import com.thesocialplaylist.user.music.adapters.recyclerview.YouTubeSearchListAdapter;
 import com.thesocialplaylist.user.music.utils.YoutubeUtil;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;

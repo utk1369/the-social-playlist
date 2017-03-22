@@ -6,6 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
@@ -17,7 +18,6 @@ import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
 import com.thesocialplaylist.user.music.api.declaration.UserApi;
 import com.thesocialplaylist.user.music.dto.PopulateDTO;
-import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserProfileRequestDTO;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
@@ -25,7 +25,6 @@ import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.TracksListFragment;
 import com.thesocialplaylist.user.music.manager.UserDataAndRelationsManager;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -135,7 +134,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), UserProfileActivity.this);
-        viewPagerAdapter.addFragment(FriendsListFragment.newInstance(userDetails.getFriends()), "Friends");
+        viewPagerAdapter.addFragment(FriendsListFragment.newInstance(userDetails.getFriends(), LinearLayoutManager.VERTICAL), "Friends");
         viewPagerAdapter.addFragment(TracksListFragment.newInstance(userDetails.getSongs(), TracksListMode.USER_PROFILE_MODE), "Songs");
 
         //viewPagerAdapter.addFragment(FriendsListFragment.newInstance(new ArrayList<FriendDTO>()), "Activities");
