@@ -4,8 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,7 +35,6 @@ import com.thesocialplaylist.user.music.utils.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -44,6 +43,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SongShareActivity extends AppCompatActivity {
+
+    private CardView selectedFriendsCard;
 
     private TextView songTitle;
 
@@ -54,6 +55,10 @@ public class SongShareActivity extends AppCompatActivity {
     private EditText caption;
 
     private TextView recipientSelectionHeader;
+
+    private RadioButton radioPublic;
+
+    private RadioButton radioRecipientsOnly;
 
     private SongDTO songToShare;
 
@@ -90,6 +95,7 @@ public class SongShareActivity extends AppCompatActivity {
 
         final UserDTO userDetails = userDataAndRelationsManager.getAppUserDataFromCache();
 
+        selectedFriendsCard = (CardView) findViewById(R.id.select_friends_card);
         songTitle = (TextView) findViewById(R.id.song_title);
         songArtist = (TextView) findViewById(R.id.song_artist);
         songAlbum = (TextView) findViewById(R.id.song_album);
@@ -97,13 +103,17 @@ public class SongShareActivity extends AppCompatActivity {
         recipientSelectionHeader =  (TextView) findViewById(R.id.recipient_header);
         friendsSearchBar = (AutoCompleteTextView) findViewById(R.id.auto_complete_friends_search);
         selectedRecipientsFragment = (FrameLayout) findViewById(R.id.selected_recipients_fragment);
+        radioPublic = (RadioButton) findViewById(R.id.radio_public);
+        radioRecipientsOnly = (RadioButton) findViewById(R.id.radio_recipients_only);
+
+        prepareLayout();
 
         getSupportActionBar().setTitle(TextUtil.convertTextToTitleCase(socialActivityType.toString()));
         songTitle.setText(songToShare.getMetadata().getTitle());
         songArtist.setText(songToShare.getMetadata().getArtist());
         songAlbum.setText(songToShare.getMetadata().getAlbum());
         FriendsSearchAutoCompleteAdapter adapter = new FriendsSearchAutoCompleteAdapter(getApplicationContext(),
-                userDataAndRelationsManager.getAllFriendsDataFromCache());
+                userDataAndRelationsManager.getAllFriendsDataFromCacheAsList());
         friendsSearchBar.setAdapter(adapter);
         friendsSearchBar.setThreshold(1);
         friendsSearchBar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -139,7 +149,23 @@ public class SongShareActivity extends AppCompatActivity {
         });
     }
 
+    private void prepareLayout() {
+        if(socialActivityType.equals(SocialActivityType.SHARE)) {
+            selectedFriendsCard.setVisibility(View.GONE);
+            radioRecipientsOnly.setVisibility(View.GONE);
+            radioPublic.setChecked(true);
+        } else if(socialActivityType.equals(SocialActivityType.DEDICATE)) {
+            radioRecipientsOnly.setChecked(true);
+        } else if(socialActivityType.equals(SocialActivityType.RECOMMEND)) {
+            radioPublic.setChecked(true);
+        }
+    }
+
     private void submitActivity(SocialActivityDTO socialActivityDTO) {
+        Boolean isValidActivity = validateSubmit(socialActivityDTO);
+        if(!isValidActivity) {
+            return;
+        }
         final ProgressDialog loading = ProgressDialog.show(SongShareActivity.this, "Please wait", "Sharing your activity");
         Call<SongDTO> activitySaveCall = userApi.linkSongToActivity(socialActivityDTO);
         activitySaveCall.enqueue(new Callback<SongDTO>() {
@@ -161,6 +187,10 @@ public class SongShareActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private Boolean validateSubmit(SocialActivityDTO socialActivityDTO) {
+        return true;
     }
 
     public void setVisibilityMode(View v) {

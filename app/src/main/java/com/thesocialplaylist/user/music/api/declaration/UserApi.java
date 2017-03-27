@@ -43,4 +43,7 @@ public interface UserApi {
 
     @POST(value = "users/activity/save")
     Call<SongDTO> linkSongToActivity(@Body SocialActivityDTO socialActivityDTO);
+
+    @POST(value = "activities/search")
+    Call<List<SocialActivityDTO>> searchActivities(@Body SocialActivityDTO searchPayload);
 }

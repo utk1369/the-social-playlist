@@ -23,6 +23,7 @@ public class SongsCacheDAO {
     private final String TABLE_NAME = "songs_cache";
 
     public Long save(SongsCache songsCache) {
+        songsCache.setSynced(false);
         return songsCache.save();
     }
 
@@ -31,7 +32,6 @@ public class SongsCacheDAO {
     }
 
     public SongsCache getOneSongForGivenClause(String clause, Object... args) {
-        //recreateTable();
         return new Select().from(SongsCache.class).where(clause, args).executeSingle();
     }
 

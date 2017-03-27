@@ -56,25 +56,43 @@ public class UserDataAndRelationsManager {
         return UserDTOBuilder.populate(userRelCaches);
     }
 
-    public List<FriendDTO> getAllFriendsDataFromCache() {
-        List<FriendDTO> friendDTOs = new ArrayList<>();
-        List<UserRelCache> userRelCaches = userRelCacheDAO.getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES.FRIEND);
+    public Map<String, UserDTO> getAllUserDTOsFromCacheAsMap(List<UserRelCache> userRelCaches) {
+        Map<String, UserDTO> usersMap= new HashMap<>();
         if(userRelCaches == null)
-            return friendDTOs;
-        Map<String, List<UserRelCache>> friendsMap = new HashMap<>();
+            return usersMap;
+        Map<String, List<UserRelCache>> usersCacheMap = new HashMap<>();
         for(UserRelCache userRelCache: userRelCaches) {
-            if(!friendsMap.containsKey(userRelCache.getFbId()))
-                friendsMap.put(userRelCache.getFbId(), new ArrayList<UserRelCache>());
-            friendsMap.get(userRelCache.getFbId()).add(userRelCache);
+            if(!usersCacheMap.containsKey(userRelCache.getFbId()))
+                usersCacheMap.put(userRelCache.getFbId(), new ArrayList<UserRelCache>());
+            usersCacheMap.get(userRelCache.getFbId()).add(userRelCache);
         }
 
-        for(Map.Entry<String, List<UserRelCache>> entry: friendsMap.entrySet()) {
-            FriendDTO friend = new FriendDTO();
+        for(Map.Entry<String, List<UserRelCache>> entry: usersCacheMap.entrySet()) {
             UserDTO userDTO = UserDTOBuilder.populate(entry.getValue());
-            friend.setFbId(userDTO.getFbId());
-            friend.setFriend(userDTO);
+            usersMap.put(userDTO.getId(), userDTO);
+        }
+        return usersMap;
+    }
+
+    public Map<String, UserDTO> getAllUsersFromCacheAsMap() {
+        List<UserRelCache> userRelCaches = userRelCacheDAO.getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES.APP_USER);
+        userRelCaches.addAll(userRelCacheDAO.getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES.FRIEND));
+
+        return getAllUserDTOsFromCacheAsMap(userRelCaches);
+    }
+
+    public List<FriendDTO> getAllFriendsDataFromCacheAsList() {
+        List<FriendDTO> friendDTOs = new ArrayList<>();
+        List<UserRelCache> userRelCaches = userRelCacheDAO.getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES.FRIEND);
+        Map<String, UserDTO> friendsMap = getAllUserDTOsFromCacheAsMap(userRelCaches);
+
+        for(Map.Entry<String, UserDTO> entry: friendsMap.entrySet()) {
+            FriendDTO friend = new FriendDTO();
+            friend.setFbId(entry.getValue().getFbId());
+            friend.setFriend(entry.getValue());
             friendDTOs.add(friend);
         }
+
         return friendDTOs;
     }
 
@@ -113,6 +131,7 @@ public class UserDataAndRelationsManager {
     public void syncSongsForUser() {
         final UserDTO userDTO = getAppUserDataFromCache();
         List<SongDTO> songsToBeSynced = musicLibraryManager.getAllSongsToBeSynced();
+        Log.i("USER_DATA_AND_REL_MGR", "No of songs to be synced: " + songsToBeSynced.size());
         Call<List<SongDTO>> syncSongs = userApi.saveSongs(userDTO.getId(), songsToBeSynced);
         syncSongs.enqueue(new Callback<List<SongDTO>>() {
             @Override

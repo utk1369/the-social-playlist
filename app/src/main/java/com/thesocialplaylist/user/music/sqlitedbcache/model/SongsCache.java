@@ -31,7 +31,7 @@ public class SongsCache extends Model implements Serializable {
     private Integer likes;
 
     @Column(name="is_synced")
-    private Boolean isSynced = false;
+    private Boolean isSynced;
 
     public List<ExternalLinksCache> externalLinksCache() {
         return getMany(ExternalLinksCache.class, "songs_cache");

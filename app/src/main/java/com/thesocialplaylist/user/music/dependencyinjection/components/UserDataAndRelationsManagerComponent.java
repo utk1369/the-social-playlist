@@ -9,6 +9,7 @@ import com.thesocialplaylist.user.music.dependencyinjection.modules.RetrofitModu
 import com.thesocialplaylist.user.music.dependencyinjection.modules.SQLiteCacheDAOManagerModule;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.UserApiModule;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.UserDataAndRelationsManagerModule;
+import com.thesocialplaylist.user.music.fragment.ActivitiesFragment;
 import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
 
 import javax.inject.Singleton;
@@ -34,4 +35,5 @@ public interface UserDataAndRelationsManagerComponent {
     void inject(MainActivity mainActivity);
     void inject(UserProfileActivity userProfileActivity);
     void inject(SongShareActivity songShareActivity);
+    void inject(ActivitiesFragment activitiesFragment);
 }

@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         UserDTO userDTO = userDataAndRelationsManager.getAppUserDataFromCache();
         if(userDTO == null)
             return new UserDTO();
-        List<FriendDTO> friendsList = userDataAndRelationsManager.getAllFriendsDataFromCache();
+        List<FriendDTO> friendsList = userDataAndRelationsManager.getAllFriendsDataFromCacheAsList();
         userDTO.setFriends(friendsList);
 
         return userDTO;

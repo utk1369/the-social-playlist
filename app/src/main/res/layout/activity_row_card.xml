@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="8sp"
+    android:background="@color/defaultCardBg"
+    app:cardElevation="4sp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="a minute ago"
+            android:gravity="end"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-normal"
+            android:layout_marginRight="8sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginTop="8sp"/>
+
+        <TextView
+            android:id="@+id/headline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User1 shared this song."
+            android:gravity="start"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-normal"
+            android:layout_marginRight="8sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginTop="8sp"
+            android:textColor="@color/primaryTextColor"/>
+
+        <TextView
+            android:id="@+id/song_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Song2 by Artist1 from the album AlbumX."
+            android:gravity="start"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-normal"
+            android:layout_marginRight="8sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginTop="8sp"
+            android:textColor="@color/secondaryTextColor"/>
+
+        <TextView
+            android:id="@+id/caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Caption..."
+            android:gravity="start"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-normal"
+            android:layout_marginRight="8sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginTop="8sp"
+            android:layout_marginBottom="8sp"
+            android:textColor="@color/primaryTextColor"
+            android:textStyle="italic"/>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

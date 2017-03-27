@@ -4,42 +4,40 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
-import com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker;
-import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
-import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
-import com.thesocialplaylist.user.music.enums.ExternalLinkType;
+import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.SocialActivityType;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
-import com.thesocialplaylist.user.music.R;
-import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.utils.AppUtil;
-
-import java.io.IOException;
-import java.util.List;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -58,7 +56,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageButton searchBtn;
     private Button dedicateBtn;
-    //private ImageView youtubeThumbnail;
+    private Button shareBtn;
+    private Button recommendBtn;
+    private RatingBar ratingBar;
     //private TextView youtubeTitle;
 
     private MusicService musicService;
@@ -96,22 +96,40 @@ public class MediaPlayerActivity extends AppCompatActivity {
         nowPlayingPlaylistBtn = (ImageButton) findViewById(R.id.playlist);
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
         dedicateBtn = (Button) findViewById(R.id.dedicate);
+        shareBtn = (Button) findViewById(R.id.share);
+        recommendBtn = (Button) findViewById(R.id.recommend);
+        ratingBar = (RatingBar) findViewById(R.id.rating);
+
         dedicateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent shareIntent = new Intent(MediaPlayerActivity.this, SongShareActivity.class);
-                shareIntent.putExtra("SONG_TO_SHARE", nowPlaying);
-                shareIntent.putExtra("ACTIVITY_TYPE", SocialActivityType.DEDICATE);
-                startActivity(shareIntent);
+                sendSongShareIntent(nowPlaying, SocialActivityType.DEDICATE);
             }
         });
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendSongShareIntent(nowPlaying, SocialActivityType.SHARE);
+            }
+        });
+        recommendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendSongShareIntent(nowPlaying, SocialActivityType.RECOMMEND);
+            }
+        });
+
+        /*ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                ratingBar.setRating(v);
+                nowPlaying.setRating((double) v);
+                musicLibraryManager.saveSongDetailsToCache(nowPlaying);
+                EventBus.getDefault().post(new SyncTracksEvent());
+            }
+        });*/
+
         songTitle.setSelected(true);
-        //searchBtn = (ImageButton) findViewById(R.id.search_btn);
-        /*Picasso.with(getApplicationContext())
-                .load(R.drawable.ic_search_black_36dp)
-                .into(searchBtn);*/
-        //youtubeThumbnail = (ImageView) findViewById(R.id.youtube_thumbnail);
-        //youtubeTitle = (TextView) findViewById(R.id.youtube_title);
 
         toolbar = (Toolbar) findViewById(R.id.media_player_toolbar);
         setSupportActionBar(toolbar);
@@ -205,33 +223,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 startActivity(playlistIntent);
             }
         });
-
-       /* searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                *//*Intent youtubeLinkIntent = new Intent(getApplicationContext(), YoutubeLinker.class);
-                youtubeLinkIntent.putExtra("KEYWORD",
-                        nowPlaying.getMetadata().getTitle()
-                                + "+" + nowPlaying.getMetadata().getArtist());
-                youtubeLinkIntent.putExtra("SONG_ID", nowPlaying.getId());
-                List<ExternalLinksDTO> externalLinksDTOs = nowPlaying.getExternalLinks();
-                if(externalLinksDTOs != null) {
-                    for(ExternalLinksDTO externalLinksDTO: externalLinksDTOs) {
-                        if(externalLinksDTO.getLinkType().equals(ExternalLinkType.YOUTUBE)) {
-                            youtubeLinkIntent.putExtra("LINKED_VIDEO_ID", externalLinksDTO.getId());
-                            break;
-                        }
-                    }
-                }
-                startActivity(youtubeLinkIntent);*//*
-                //Snackbar.make()
-                Intent intent = new Intent(Intent.ACTION_SEARCH);
-                intent.setPackage("com.google.android.youtube");
-                intent.putExtra("query", nowPlaying.getMetadata().getTitle() + " " + nowPlaying.getMetadata().getArtist());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });*/
+        /*Intent intent = new Intent(Intent.ACTION_SEARCH);
+        intent.setPackage("com.google.android.youtube");
+        intent.putExtra("query", nowPlaying.getMetadata().getTitle() + " " + nowPlaying.getMetadata().getArtist());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);*/
     }
 
     private void populateSongAttributes(int position) {
@@ -246,31 +242,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
         songTitle.setText(nowPlaying.getMetadata().getTitle());
         artist.setText(nowPlaying.getMetadata().getArtist());
         album.setText(nowPlaying.getMetadata().getAlbum());
+        ratingBar.setRating(nowPlaying.getRating() == null ? (float) 0.0 : nowPlaying.getRating().floatValue());
 
         Log.i("MediaPlayer", "Hits: " + nowPlaying.getHits());
         Log.i("MediaPlayer", "Song Id: " + nowPlaying.getMetadata().getId());
-
-        List<ExternalLinksDTO> externalLinksDTOs = nowPlaying.getExternalLinks();
-        /*if(externalLinksDTOs != null && externalLinksDTOs.size() > 0) {
-            for(ExternalLinksDTO externalLinksDTO: externalLinksDTOs) {
-                if(externalLinksDTO.getLinkType().equals(ExternalLinkType.YOUTUBE)) {
-                    youtubeTitle.setText(externalLinksDTO.getTitle());
-                    Picasso.with(getApplicationContext())
-                            .load(externalLinksDTO.getThumbnailUrl())
-                            .fit()
-                            .placeholder(R.drawable.ic_equalizer_white_24dp)
-                            .error(R.drawable.ic_equalizer_white_24dp)
-                            .into(youtubeThumbnail);
-                }
-            }
-        } else {
-            youtubeTitle.setText("Link to YouTube");
-            Picasso.with(getApplicationContext())
-                    .load(R.drawable.ic_equalizer_white_24dp)
-                    .error(R.drawable.ic_equalizer_white_24dp)
-                    .into(youtubeThumbnail);
-        }*/
-        //album.setText("");
         AppUtil.loadAlbumArt(getApplicationContext(), nowPlaying.getMetadata().getAlbumId(), thumbnail);
 
         setPlayPauseButton();
@@ -297,5 +272,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
         playPauseBtn.setImageResource(
                 musicService.isPlaying() ?
                         R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp);
+    }
+
+    private void sendSongShareIntent(SongDTO songDTO, SocialActivityType activityType) {
+        Intent shareIntent = new Intent(MediaPlayerActivity.this, SongShareActivity.class);
+        shareIntent.putExtra("SONG_TO_SHARE", songDTO);
+        shareIntent.putExtra("ACTIVITY_TYPE", activityType);
+        startActivity(shareIntent);
     }
 }

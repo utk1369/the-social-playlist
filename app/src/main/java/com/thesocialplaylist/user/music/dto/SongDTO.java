@@ -24,7 +24,7 @@ public class SongDTO implements Serializable{
 
     private Double rating;
 
-    private List<SocialActivityDTO> socialActivities;
+    private List<String> socialActivities;
 
     public String getId() {
         return id;
@@ -82,11 +82,11 @@ public class SongDTO implements Serializable{
         this.rating = rating;
     }
 
-    public List<SocialActivityDTO> getSocialActivities() {
+    public List<String> getSocialActivities() {
         return socialActivities;
     }
 
-    public void setSocialActivities(List<SocialActivityDTO> socialActivities) {
+    public void setSocialActivities(List<String> socialActivities) {
         this.socialActivities = socialActivities;
     }
 }

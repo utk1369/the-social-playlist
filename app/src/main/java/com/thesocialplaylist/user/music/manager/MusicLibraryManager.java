@@ -127,6 +127,7 @@ public class MusicLibraryManager {
     }
 
     public List<SongDTO> getAllSongs(String filterCriteria, String[] filterParameters) {
+        //songsCacheDAO.recreateTable();
         List<SongDTO> songDTOs = new ArrayList<>();
         List<SongMetadataDTO> songMetadataDTOs = getSongsAsList(filterCriteria, filterParameters);
         List<SongsCache> songsCaches = songsCacheDAO.getAllSongsFromCache();
