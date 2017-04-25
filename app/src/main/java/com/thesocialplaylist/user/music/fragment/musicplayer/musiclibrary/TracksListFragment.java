@@ -18,6 +18,8 @@ import com.thesocialplaylist.user.music.adapters.recyclerview.TracksListAdapter;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
 import com.thesocialplaylist.user.music.service.MusicService;
+import com.thesocialplaylist.user.music.utils.AppUtil;
+
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.ComponentName;
@@ -60,6 +62,13 @@ public class TracksListFragment extends Fragment {
         }
     }
 
+    private class userProfileModeOnClickListener implements OnRecyclerItemClickListener {
+        @Override
+        public void onItemClick(View view, int position) {
+            AppUtil.searchSongOnYoutube(tracks.get(position).getMetadata(), appContext);
+        }
+    }
+
     public TracksListFragment() {
 
     }
@@ -92,13 +101,13 @@ public class TracksListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         musicServiceIntent = new Intent(appContext, MusicService.class);
-        appContext.bindService(musicServiceIntent, musicServiceConn, Context.BIND_AUTO_CREATE);
         appContext.startService(musicServiceIntent);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        appContext.bindService(musicServiceIntent, musicServiceConn, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -117,12 +126,14 @@ public class TracksListFragment extends Fragment {
     private void initialize() {
         tracks = (List<SongDTO>) getArguments().getSerializable(TRACKS_LIST_KEY);
         TracksListMode mode = (TracksListMode) getArguments().getSerializable(TRACKS_LIST_MODE_KEY);
-        Log.i("From fragment", tracks.size() + "");
+        Log.i("trackslist fragment", tracks.size() + "");
         appContext = getActivity().getApplicationContext();
         adapter = new TracksListAdapter(tracks, mode, getActivity().getApplicationContext());
 
         if(mode.equals(TracksListMode.MUSIC_PLAYER_MODE))
             adapter.setOnRecyclerItemClickListener(new musicPlayerModeOnClickListener());
+        else if(mode.equals(TracksListMode.USER_PROFILE_MODE))
+            adapter.setOnRecyclerItemClickListener(new userProfileModeOnClickListener());
 
         tracksList = (RecyclerView) fragmentView.findViewById(R.id.tracks_list);
         tracksList.setHasFixedSize(true);
@@ -134,10 +145,16 @@ public class TracksListFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("TRACKS LIST FRAGMENT", "onPause called");
+        appContext.unbindService(musicServiceConn);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        appContext.unbindService(musicServiceConn);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

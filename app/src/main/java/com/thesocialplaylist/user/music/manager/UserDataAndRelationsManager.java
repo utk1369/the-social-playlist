@@ -53,6 +53,8 @@ public class UserDataAndRelationsManager {
 
     public UserDTO getAppUserDataFromCache() {
         List<UserRelCache> userRelCaches = userRelCacheDAO.getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES.APP_USER);
+        if(userRelCaches == null || userRelCaches.size() == 0)
+            return null;
         return UserDTOBuilder.populate(userRelCaches);
     }
 

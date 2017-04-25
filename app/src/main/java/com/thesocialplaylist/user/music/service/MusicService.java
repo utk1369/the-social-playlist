@@ -1,21 +1,31 @@
 package com.thesocialplaylist.user.music.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
+import com.thesocialplaylist.user.music.activity.musicplayer.MediaPlayerActivity;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
+import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +44,7 @@ public class MusicService extends Service
         implements MediaPlayer.OnCompletionListener,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
 
+    private static final int NOTIFICATION_ID = 1369;
     private MediaPlayer mediaPlayer;
     private List<SongDTO> nowPlayingList;
     private int currentPlayingPosition;
@@ -84,6 +95,7 @@ public class MusicService extends Service
         mEventBus.post(new TrackPlaybackEvent(
                 PlaybackEvent.NEW_TRACK,
                 songDTO));
+        buildNotification(songDTO, PlaybackEvent.PLAY);
     }
 
     public void setNowPlayingList(List<SongDTO> listOfSongDTOs) {
@@ -103,11 +115,50 @@ public class MusicService extends Service
     }
 
     @Override
-    public boolean onUnbind(Intent intent){
-        //mediaPlayer.stop();
-        //mediaPlayer.release();
-        Log.i("Unbinding Service", "");
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent != null && intent.getAction() != null) {
+            try {
+                handleIncomingIntent(intent);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("MUSIC SERVICE", "Incoming intent failed to handle");
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void handleIncomingIntent(Intent intent) throws IOException {
+        if(intent.getAction().equals(PlaybackEvent.NEXT.name())) {
+            playNextSong();
+            buildNotification(nowPlayingList.get(currentPlayingPosition), PlaybackEvent.NEXT);
+        } else if(intent.getAction().equals(PlaybackEvent.PREV.name())) {
+            playPrevSong();
+            buildNotification(nowPlayingList.get(currentPlayingPosition),PlaybackEvent.PREV);
+        } else if(intent.getAction().equals(PlaybackEvent.PLAY.name())) {
+            play();
+            buildNotification(nowPlayingList.get(currentPlayingPosition), PlaybackEvent.PLAY);
+        } else if(intent.getAction().equals(PlaybackEvent.PAUSE.name())) {
+            pause();
+            buildNotification(nowPlayingList.get(currentPlayingPosition), PlaybackEvent.PAUSE);
+        }
+    }
+
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.i("Music Service", "on unbind called");
         return false;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i("Music Service", "on destroy called");
+        /*mediaPlayer.stop();
+        mediaPlayer.reset();
+        mediaPlayer.release();*/
+        stopForeground(true);
+        //make sure to unbind all the clients bound to this service before calling stop self.
+        stopSelf();
     }
 
     public class MediaPlayerServiceBinder extends Binder {
@@ -222,5 +273,44 @@ public class MusicService extends Service
         int n = nowPlayingList.size();
         currentPlayingPosition = ((currentPlayingPosition - 1) + n) % n;
         playSong(getNowPlayingList(), currentPlayingPosition);
+    }
+
+    public void buildNotification(SongDTO nowPlaying, PlaybackEvent playbackEvent) {
+        int playPauseIcon = R.drawable.ic_play_arrow_white_24dp;
+        PendingIntent playPausePendingIntent =  getPlaybackAction(PlaybackEvent.PLAY);
+        if(playbackEvent.equals(PlaybackEvent.PAUSE)) {
+            playPauseIcon = R.drawable.ic_play_arrow_white_24dp;
+            playPausePendingIntent = getPlaybackAction(PlaybackEvent.PLAY);
+        } else if(playbackEvent.equals(PlaybackEvent.PLAY)) {
+            playPauseIcon = R.drawable.ic_pause_white_24dp;
+            playPausePendingIntent = getPlaybackAction(PlaybackEvent.PAUSE);
+        }
+
+        Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                // Show controls on lock screen even when user hides sensitive content.
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.drawable.ic_audiotrack_white_24dp)
+                // Add media control buttons that invoke intents in your media service
+                .addAction(R.drawable.ic_skip_previous_white_24dp, "Previous", getPlaybackAction(PlaybackEvent.PREV)) // #0
+                .addAction(playPauseIcon, "Play/Pause", playPausePendingIntent)  // #1
+                .addAction(R.drawable.ic_skip_next_white_24dp, "Next", getPlaybackAction(PlaybackEvent.NEXT))     // #2
+                // Apply the media style template
+                .setStyle(new NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(0, 1, 2))
+                .setContentTitle(nowPlaying.getMetadata().getTitle())
+                .setContentText(nowPlaying.getMetadata().getArtist())
+                .setContentIntent(PendingIntent.getActivity(this, 123, new Intent(this, MediaPlayerActivity.class), PendingIntent.FLAG_CANCEL_CURRENT))
+                .setLargeIcon(ImageUtil.getAlbumArtAsBitmap(this,
+                        nowPlaying.getMetadata().getAlbumId(), BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_audiotrack_white_24dp)))
+                .setShowWhen(false)
+                .build();
+
+        startForeground(NOTIFICATION_ID, notification);
+    }
+
+    private PendingIntent getPlaybackAction(PlaybackEvent playbackEvent) {
+        Intent playbackIntent = new Intent(this, MusicService.class);
+        playbackIntent.setAction(playbackEvent.name());
+        return PendingIntent.getService(this, 1, playbackIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

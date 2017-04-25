@@ -14,11 +14,8 @@
             android:layout_width="100sp"
             android:layout_height="100sp"
             android:src="@drawable/ic_person_black_48dp"
-            app:civ_border_color="@color/defaultCardBg"
-            app:civ_border_width="4sp"
-            app:civ_shadow="true"
-            app:civ_shadow_radius="5"
-            app:civ_shadow_color="#FFFFFF"
+            app:civ_border_width="1sp"
+            app:civ_border_color="#FFFFFF"
             android:layout_marginLeft="16sp"
             android:layout_marginTop="4sp"
             android:layout_marginBottom="4sp"
@@ -49,9 +46,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0sp"
                     android:layout_weight="1"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif-normal"
-                    android:textColor="#B3E5FC"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="@android:color/white"
                     android:layout_marginTop="8sp"/>
         </LinearLayout>
     </LinearLayout>

@@ -19,13 +19,10 @@
 
             <ImageView
                 android:id="@+id/thumbnail"
-                android:layout_margin="16sp"
-                android:src="@drawable/ic_headset_black_36dp"
-                android:layout_gravity="center"
+                android:layout_margin="24sp"
+                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="0sp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
                 android:layout_weight="7"/>
 
             <LinearLayout
@@ -43,7 +40,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:text="Select a Song"
                     android:gravity="center_vertical|center_horizontal"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:ellipsize="marquee"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
@@ -87,46 +84,12 @@
                 android:layout_height="0sp"
                 android:orientation="horizontal"
                 android:layout_weight="1"
-                android:weightSum="2">
-                <RelativeLayout
-                    android:id="@+id/likes_layout"
-                    android:layout_width="0sp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_below="@+id/song_artist"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:layout_marginRight="4sp">
-                    <TextView
-                        android:gravity="top"
-                        android:id="@+id/likes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="48"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-normal"/>
+                android:weightSum="2"
+                android:gravity="center"
+                android:layout_margin="4sp">
 
-                    <ImageView
-                        android:layout_marginLeft="2sp"
-                        android:layout_width="16sp"
-                        android:layout_height="16sp"
-                        android:src="@drawable/ic_thumb_up_black_24dp"
-                        android:layout_toRightOf="@id/likes"/>
-                </RelativeLayout>
+                <include layout="@layout/content_track_action_buttons"/>
 
-                <RelativeLayout
-                    android:layout_width="0sp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                    <RatingBar
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:id="@+id/rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:numStars="5"
-                        android:rating="0.0"
-                        android:stepSize="0.5"
-                        android:layout_gravity="center_vertical|center_horizontal"/>
-                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
 

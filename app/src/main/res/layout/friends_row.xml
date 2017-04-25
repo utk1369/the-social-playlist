@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
+    android:background="#FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1sp"
@@ -9,16 +10,16 @@
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/display_picture"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:src="@drawable/ic_person_black_48dp"
-        app:civ_border_width="4sp"
-        app:civ_shadow="true"
-        app:civ_shadow_radius="2"
-        app:civ_shadow_color="#FFFFFF"
+        android:layout_width="64sp"
+        android:layout_height="64sp"
         android:layout_gravity="center_vertical|center_horizontal"
         android:layout_weight="1"
-        android:layout_marginLeft="16sp"/>
+        app:civ_border_width="1sp"
+        app:civ_border_color="@color/defaultCardBg"
+        android:layout_marginLeft="16sp"
+        android:layout_marginTop="8sp"
+        android:layout_marginBottom="8sp"
+        android:background="@android:color/transparent"/>
 
     <RelativeLayout
         android:layout_weight="19"
@@ -33,9 +34,8 @@
             android:fontFamily="sans-serif-medium"
             android:text="User Name"
             android:textSize="15sp"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:scrollHorizontally="true"
             android:textColor="@color/primaryTextColor"/>
         <TextView

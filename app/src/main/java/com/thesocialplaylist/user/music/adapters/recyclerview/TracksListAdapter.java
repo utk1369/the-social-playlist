@@ -10,16 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.ExternalLinkType;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
-import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import java.util.List;
 
@@ -91,11 +92,16 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
         holder.trackTitle.setText(track.getMetadata().getTitle());
         holder.trackArtist.setText(track.getMetadata().getArtist());
         if(mode.equals(TracksListMode.USER_PROFILE_MODE)) {
-            AppUtil.loadImageUsingPicasso(appContext, null, holder.thumbnail,
-                    AppUtil.getDrawableResource(appContext, R.drawable.ic_headset_black_36dp, appContext.getTheme()),
-                    AppUtil.getDrawableResource(appContext, R.drawable.ic_headset_black_36dp, appContext.getTheme()));
+            ImageUtil.loadImageUsingPicasso(appContext, null, holder.thumbnail,
+                    ImageUtil.getDrawableResource(appContext, R.drawable.ic_audiotrack_black_48dp, appContext.getTheme()),
+                    ImageUtil.getDrawableResource(appContext, R.drawable.ic_audiotrack_black_48dp, appContext.getTheme()));
+
+            holder.actionButtonsLayout.setVisibility(View.VISIBLE);
+            holder.noOfLikes.setText(track.getLikes().size() + "");
+            holder.noOfShares.setText(track.getSocialActivities().size() + "");
+            holder.userRating.setRating(track.getRating() == null ? (float) 0.0 : track.getRating().floatValue());
         } else {
-            AppUtil.loadAlbumArt(appContext, track.getMetadata().getAlbumId(), holder.thumbnail);
+            ImageUtil.loadAlbumArt(appContext, track.getMetadata().getAlbumId(), holder.thumbnail);
         }
         Boolean selectionCriteria = false;
         if(mode.equals(TracksListMode.MUSIC_PLAYER_MODE))
@@ -103,17 +109,6 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
         else if(mode.equals(TracksListMode.PLAYLIST_MODE))
             selectionCriteria = (selectedRows != null && selectedRows.contains(position));
         highlightRow(holder.itemView, selectionCriteria);
-        if(track.getExternalLinks() != null && track.getExternalLinks().size() > 0) {
-            Picasso.with(appContext)
-                    .load(R.drawable.youtube_128)
-                    .fit()
-                    .into(holder.youtubeLinkFlag);
-        } else {
-            Picasso.with(appContext)
-                    .load(R.drawable.ic_audiotrack_black_24dp)
-                    .fit()
-                    .into(holder.youtubeLinkFlag);
-        }
     }
 
     @Override
@@ -126,7 +121,12 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
         private TextView trackTitle;
         private TextView trackArtist;
         private ImageButton options;
-        private ImageView youtubeLinkFlag;
+
+        private LinearLayout actionButtonsLayout;
+        private TextView noOfLikes;
+        private TextView noOfShares;
+        private RatingBar userRating;
+
 
         public TrackRowHolder(final View itemView) {
             super(itemView);
@@ -134,7 +134,6 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
             trackTitle = (TextView) itemView.findViewById(R.id.track_title);
             trackArtist = (TextView) itemView.findViewById(R.id.track_artist);
-            youtubeLinkFlag = (ImageView) itemView.findViewById(R.id.youtube_link_flag);
             options = (ImageButton) itemView.findViewById(R.id.options);
             options.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,6 +144,10 @@ public class TracksListAdapter extends RecyclerView.Adapter<TracksListAdapter.Tr
                     popupMenu.show();
                 }
             });
+            noOfLikes = (TextView) itemView.findViewById(R.id.no_of_likes);
+            noOfShares = (TextView) itemView.findViewById(R.id.no_of_shares);
+            userRating = (RatingBar) itemView.findViewById(R.id.user_rating);
+            actionButtonsLayout = (LinearLayout) itemView.findViewById(R.id.action_btns);
         }
 
         @Override

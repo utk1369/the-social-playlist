@@ -14,7 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
@@ -28,6 +30,7 @@ import com.thesocialplaylist.user.music.dto.UserLoginRequestDTO;
 import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
 import com.thesocialplaylist.user.music.manager.UserDataAndRelationsManager;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache;
+import com.thesocialplaylist.user.music.utils.AppUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private ActionBar actionBar;
     private ImageButton mediaPlayerBtn;
-    private ImageButton userProfileBtn;
+    private CircularImageView userProfileBtn;
+
+    private FriendsListFragment friendsListFragment;
 
     @Inject
     public UserDataAndRelationsManager userDataAndRelationsManager;
@@ -72,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_person_black_48dp)
                 .error(R.drawable.ic_person_black_48dp)
                 .into(userProfileBtn);
+        Toast.makeText(this, "Friends Size: " + (getUserDTO().getFriends() == null ?
+                "null": getUserDTO().getFriends().size() + ""), Toast.LENGTH_SHORT).show();
+        //AppUtil.replaceFragments(getSupportFragmentManager(), R.id.);
     }
 
     private void init() {
@@ -95,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userProfileBtn = (ImageButton) findViewById(R.id.user_profile_btn);
+        userProfileBtn = (CircularImageView) findViewById(R.id.user_profile_btn);
         userProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setScreenDetails();
+
+        friendsListFragment = FriendsListFragment.newInstance(getUserDTO().getFriends(), LinearLayoutManager.VERTICAL);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(getViewPagerAdapter());
@@ -121,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Feed");
-        viewPagerAdapter.addFragment(FriendsListFragment.newInstance(getUserDTO().getFriends(), LinearLayoutManager.VERTICAL), "Friends");
+        viewPagerAdapter.addFragment(friendsListFragment, "Friends");
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Notifications");
         return viewPagerAdapter;
     }
@@ -171,15 +181,18 @@ public class MainActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body() != null) {
                     updateAndRefreshUserDetails(response.body());
                     Log.i("LOGIN", "User found: " + getUserDTO().getId());
+                    Toast.makeText(MainActivity.this, "User found: " + getUserDTO().getId(), Toast.LENGTH_SHORT).show();
                 } else {
                     Log.e("LOGIN", "Some error! [" + response.errorBody().toString()+ "]");
+                    Toast.makeText(MainActivity.this, "User retrieval unsuccessful.", Toast.LENGTH_SHORT).show();
+
                 }
             }
             @Override
             public void onFailure(Call<UserDTO> call, Throwable t) {
                 loading.dismiss();
-
-                Log.e("Search call failed for ", userDetails.getFbId() + "[" + t.getMessage() + "]");
+                Toast.makeText(MainActivity.this, "Login call failed.", Toast.LENGTH_SHORT).show();
+                Log.e("Login call failed for ", userDetails.getFbId() + "[" + t.getMessage() + "]");
             }
         });
     }

@@ -32,24 +32,32 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:textColor="@color/primaryTextColor"/>
+
+        <LinearLayout
+            android:id="@+id/action_btns"
+            android:layout_below="@+id/track_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8sp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <include layout="@layout/content_track_action_buttons"/>
+
+        </LinearLayout>
+
         <TextView
-            android:layout_marginTop="3sp"
             android:id="@+id/track_artist"
-            android:layout_below="@+id/track_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Artist"
             android:fontFamily="sans-serif-light"
             android:textSize="12sp"
             android:maxLines="1"
-            android:ellipsize="marquee"/>
-
-        <ImageView
-            android:id="@+id/youtube_link_flag"
-            android:layout_marginTop="4sp"
-            android:layout_width="16sp"
-            android:layout_height="16sp"
-            android:layout_below="@id/track_artist"/>
+            android:ellipsize="marquee"
+            android:layout_below="@+id/track_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
 
     <ImageButton

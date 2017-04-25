@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.dto.AlbumDTO;
-import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.Albu
     @Override
     public void onBindViewHolder(final AlbumGridElementHolder holder, int position) {
         AlbumDTO albumDTO = albumsList.get(position);
-        AppUtil.loadAlbumArt(appContext, albumDTO.getAlbumId(), holder.albumArt);
+        ImageUtil.loadAlbumArt(appContext, albumDTO.getAlbumId(), holder.albumArt);
         holder.albumTitle.setText(albumDTO.getAlbumName());
     }
 

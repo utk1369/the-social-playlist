@@ -30,8 +30,8 @@
             android:layout_height="wrap_content"
             android:text="Title"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:fontFamily="sans-serif-condensed"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
@@ -45,15 +45,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/song_artist"
-            android:textSize="10sp"
+            android:textSize="13sp"
             android:textColor="@color/defaultCardBg"
-            android:textStyle="italic"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-normal"
             android:text="Artist"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"/>
+            android:maxLines="1"
+            android:ellipsize="end"/>
     </LinearLayout>
 
     <LinearLayout

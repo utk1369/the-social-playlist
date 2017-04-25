@@ -2,21 +2,26 @@ package com.thesocialplaylist.user.music.activity.musicplayer;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,11 +31,13 @@ import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.SocialActivityType;
+import com.thesocialplaylist.user.music.events.models.SyncTracksEvent;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
-import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.ImageUtil;
+import com.thesocialplaylist.user.music.utils.PaletteUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,7 +66,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Button shareBtn;
     private Button recommendBtn;
     private RatingBar ratingBar;
-    //private TextView youtubeTitle;
+    private LinearLayout headerView;
 
     private MusicService musicService;
     private Intent musicSrvIntent;
@@ -73,7 +80,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         musicSrvIntent = new Intent(this, MusicService.class);
-        bindService(musicSrvIntent, musicserviceConnection, Context.BIND_AUTO_CREATE);
         startService(musicSrvIntent);
     }
 
@@ -98,7 +104,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         dedicateBtn = (Button) findViewById(R.id.dedicate);
         shareBtn = (Button) findViewById(R.id.share);
         recommendBtn = (Button) findViewById(R.id.recommend);
-        ratingBar = (RatingBar) findViewById(R.id.rating);
+        ratingBar = (RatingBar) findViewById(R.id.user_rating);
+        headerView = (LinearLayout) findViewById(R.id.header_view);
 
         dedicateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,15 +126,13 @@ public class MediaPlayerActivity extends AppCompatActivity {
             }
         });
 
-        /*ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                ratingBar.setRating(v);
-                nowPlaying.setRating((double) v);
-                musicLibraryManager.saveSongDetailsToCache(nowPlaying);
-                EventBus.getDefault().post(new SyncTracksEvent());
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                getInputRating();
+                return false;
             }
-        });*/
+        });
 
         songTitle.setSelected(true);
 
@@ -138,6 +143,39 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
         ((TheSocialPlaylistApplication) getApplication()).getMusicLibraryManagerComponent().inject(this);
+    }
+
+    private void getInputRating() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Rate this song");
+        View v = getLayoutInflater().inflate(R.layout.dialog_song_rating, null);
+        dialogBuilder.setView(v);
+
+        RatingBar inputRatingBar = (RatingBar) v.findViewById(R.id.input_rating);
+        TextView songTitleToRate = (TextView) v.findViewById(R.id.song_title_to_rate);
+        songTitleToRate.setText(nowPlaying.getMetadata().getTitle());
+        inputRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                nowPlaying.setRating((double) v);
+            }
+        });
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                musicLibraryManager.saveSongDetailsToCache(nowPlaying);
+                EventBus.getDefault().post(new SyncTracksEvent());
+                populateSongAttributes(musicService.getCurrentPlayingPosition());
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        dialogBuilder.create();
+        dialogBuilder.show();
     }
 
     private ServiceConnection musicserviceConnection = new ServiceConnection() {
@@ -158,20 +196,22 @@ public class MediaPlayerActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        bindService(musicSrvIntent, musicserviceConnection, Context.BIND_AUTO_CREATE);
         if(musicService != null)
             populateSongAttributes(musicService.getCurrentPlayingPosition());
     }
 
     @Override
     public void onPause() {
+        Log.i("MEDIA PLAYER ACTIVITY", "onPause Called.");
         super.onPause();
+        unbindService(musicserviceConnection);
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        //mediaPlayer.release();
-        unbindService(musicserviceConnection);
+        //unbindService(musicserviceConnection);
         EventBus.getDefault().unregister(this);
     }
 
@@ -223,11 +263,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 startActivity(playlistIntent);
             }
         });
-        /*Intent intent = new Intent(Intent.ACTION_SEARCH);
-        intent.setPackage("com.google.android.youtube");
-        intent.putExtra("query", nowPlaying.getMetadata().getTitle() + " " + nowPlaying.getMetadata().getArtist());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);*/
     }
 
     private void populateSongAttributes(int position) {
@@ -239,15 +274,25 @@ public class MediaPlayerActivity extends AppCompatActivity {
         }
 
         nowPlaying = musicLibraryManager.getSongDetails(songsList.get(position).getMetadata().getId());
-        songTitle.setText(nowPlaying.getMetadata().getTitle());
-        artist.setText(nowPlaying.getMetadata().getArtist());
-        album.setText(nowPlaying.getMetadata().getAlbum());
-        ratingBar.setRating(nowPlaying.getRating() == null ? (float) 0.0 : nowPlaying.getRating().floatValue());
 
         Log.i("MediaPlayer", "Hits: " + nowPlaying.getHits());
         Log.i("MediaPlayer", "Song Id: " + nowPlaying.getMetadata().getId());
-        AppUtil.loadAlbumArt(getApplicationContext(), nowPlaying.getMetadata().getAlbumId(), thumbnail);
+        ImageUtil.loadAlbumArt(getApplicationContext(), nowPlaying.getMetadata().getAlbumId(), thumbnail);
+        Bitmap defaultAlbumArt = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_audiotrack_white_24dp);
+        Bitmap albumArtAsBitmap = ImageUtil.getAlbumArtAsBitmap(getApplicationContext(),
+                nowPlaying.getMetadata().getAlbumId(), defaultAlbumArt);
+        Bitmap blurredBackground = ImageUtil.blurImage(getApplicationContext(), albumArtAsBitmap, 25f);
+        //headerView.setBackground(new BitmapDrawable(getApplicationContext().getResources(), blurredBackground));
 
+        /*songTitle.setTextColor(PaletteUtil.getTitleTextColor(albumArtAsBitmap));
+        artist.setTextColor(PaletteUtil.getBodyTextColor(albumArtAsBitmap));
+        album.setTextColor(PaletteUtil.getBodyTextColor(albumArtAsBitmap));*/
+
+        songTitle.setText(nowPlaying.getMetadata().getTitle());
+        artist.setText(nowPlaying.getMetadata().getArtist());
+        album.setText(nowPlaying.getMetadata().getAlbum());
+
+        ratingBar.setRating(nowPlaying.getRating() == null ? (float) 0.0 : nowPlaying.getRating().floatValue());
         setPlayPauseButton();
     }
 

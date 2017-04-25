@@ -15,7 +15,7 @@ import com.thesocialplaylist.user.music.dto.AlbumDTO;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.TracksListFragment;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
-import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -53,7 +53,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setTitle(albumDTO.getAlbumName());
         prepareTracksFragment();
-        AppUtil.loadAlbumArt(getApplicationContext(), albumDTO.getAlbumId(), albumArt);
+        ImageUtil.loadAlbumArt(getApplicationContext(), albumDTO.getAlbumId(), albumArt);
         Toast.makeText(AlbumDetailsActivity.this, "AlbumDTO: " + albumDTO.getAlbumName() , Toast.LENGTH_SHORT).show();
     }
 

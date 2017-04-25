@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
-import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -56,7 +57,6 @@ public class MediaControllerFragment extends Fragment {
     public void onStart() {
         super.onStart();
         musicServiceIntent = new Intent(appContext, MusicService.class);
-        appContext.bindService(musicServiceIntent, musicServiceConn, Context.BIND_AUTO_CREATE);
         appContext.startService(musicServiceIntent);
     }
 
@@ -82,7 +82,7 @@ public class MediaControllerFragment extends Fragment {
         setPlayPauseButton();
         songTitle.setText(nowPlaying.getMetadata().getTitle());
         songArtist.setText(nowPlaying.getMetadata().getArtist());
-        AppUtil.loadAlbumArt(getActivity().getApplicationContext(),
+        ImageUtil.loadAlbumArt(getActivity().getApplicationContext(),
                 nowPlaying.getMetadata().getAlbumId(), albumArt);
     }
 
@@ -110,6 +110,7 @@ public class MediaControllerFragment extends Fragment {
     public void onResume() {
         //Toast.makeText(appContext, "Resuming Playback in Fragment", Toast.LENGTH_SHORT).show();
         super.onResume();
+        appContext.bindService(musicServiceIntent, musicServiceConn, Context.BIND_AUTO_CREATE);
     }
 
     private void initialize() {
@@ -124,9 +125,16 @@ public class MediaControllerFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        Log.i("MEDIACONTROLLERFRAGMENT", "onPause Called.");
+        super.onPause();
+        appContext.unbindService(musicServiceConn);
+    }
+
+    @Override
     public void onDestroy(){
         super.onDestroy();
-        appContext.unbindService(musicServiceConn);
+        //appContext.unbindService(musicServiceConn);
         EventBus.getDefault().unregister(this);
     }
 
