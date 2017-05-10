@@ -1,5 +1,6 @@
 package com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,19 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.content.Context;
 
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.adapters.recyclerview.MusicLibraryTracksListAdapter;
 import com.thesocialplaylist.user.music.adapters.recyclerview.UserProfileTracksListViewAdapter;
 import com.thesocialplaylist.user.music.dto.SongDTO;
-import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
-import com.thesocialplaylist.user.music.enums.PlaybackEvent;
+import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.List;
@@ -33,6 +28,7 @@ public class TracksListFragment extends Fragment {
     private UserProfileTracksListViewAdapter userProfileTracksListViewAdapter;
 
     private List<SongDTO> tracks;
+    private UserDTO appUserDetails;
 
     private Context appContext;
     private LinearLayoutManager layoutManager;
@@ -45,6 +41,7 @@ public class TracksListFragment extends Fragment {
 
     private static final String TRACKS_LIST_KEY = "tracksList";
     private static final String TRACKS_LIST_MODE_KEY = "tracksListMode";
+    private static final String APP_USER_DETAILS = "appUserDetails";
 
     private TracksListMode mode;
 
@@ -53,11 +50,16 @@ public class TracksListFragment extends Fragment {
     }
 
     public static TracksListFragment newInstance(List<SongDTO> songDTOs, TracksListMode mode) {
+        return newInstance(songDTOs, mode, null);
+    }
+
+    public static TracksListFragment newInstance(List<SongDTO> songDTOs, TracksListMode mode, UserDTO appUserDetails) {
         TracksListFragment tracksListFragment = new TracksListFragment();
-        Bundle tracksList = new Bundle();
-        tracksList.putSerializable(TRACKS_LIST_KEY, (Serializable) songDTOs);
-        tracksList.putSerializable(TRACKS_LIST_MODE_KEY, (Serializable) mode);
-        tracksListFragment.setArguments(tracksList);
+        Bundle args = new Bundle();
+        args.putSerializable(TRACKS_LIST_KEY, (Serializable) songDTOs);
+        args.putSerializable(TRACKS_LIST_MODE_KEY, mode);
+        args.putSerializable(APP_USER_DETAILS, appUserDetails);
+        tracksListFragment.setArguments(args);
         return tracksListFragment;
     }
 
@@ -84,7 +86,8 @@ public class TracksListFragment extends Fragment {
             tracksList.setAdapter(musicLibraryTracksListAdapter);
         }
         else if(mode == TracksListMode.USER_PROFILE_MODE) {
-            userProfileTracksListViewAdapter = new UserProfileTracksListViewAdapter(tracks, appContext, onTrackInfoClickListener, onLikeButtonClickListener);
+            userProfileTracksListViewAdapter = new UserProfileTracksListViewAdapter(tracks, appContext,
+                    onTrackInfoClickListener, onLikeButtonClickListener, appUserDetails);
             tracksList.setAdapter(userProfileTracksListViewAdapter);
         }
 
@@ -102,7 +105,6 @@ public class TracksListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -110,6 +112,7 @@ public class TracksListFragment extends Fragment {
         super.onAttach(context);
         tracks = (List<SongDTO>) getArguments().getSerializable(TRACKS_LIST_KEY);
         mode = (TracksListMode) getArguments().getSerializable(TRACKS_LIST_MODE_KEY);
+        appUserDetails = (UserDTO) getArguments().getSerializable(APP_USER_DETAILS);
 
         try {
             if(mode == TracksListMode.MUSIC_PLAYER_MODE) {

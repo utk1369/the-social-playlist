@@ -13,6 +13,7 @@ import android.os.ParcelFileDescriptor;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -101,5 +102,10 @@ public class ImageUtil {
             return resultImage;
         }
         return null;
+    }
+
+    public static void colorImageViewDrawable(Context appContext, ImageView imageView,
+                                              int color) {
+        imageView.setColorFilter(ContextCompat.getColor(appContext, color));
     }
 }

@@ -13,9 +13,8 @@ import android.widget.TextView;
 
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.dto.SongDTO;
+import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.utils.ImageUtil;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -29,6 +28,8 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
     private Context appContext;
     private OnTrackInfoClickListener onTrackInfoClickListener;
     private OnLikeButtonClickListener onLikeButtonClickListener;
+    private UserDTO appUserDetails;
+
 
     public interface OnTrackInfoClickListener {
         public void onTrackInfoClick(int position, List<SongDTO> tracksList);
@@ -39,11 +40,13 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
     }
 
     public UserProfileTracksListViewAdapter(List<SongDTO> tracksList, Context appContext,
-                                            OnTrackInfoClickListener onTrackInfoClickListener, OnLikeButtonClickListener onLikeButtonClickListener) {
+                                            OnTrackInfoClickListener onTrackInfoClickListener, OnLikeButtonClickListener onLikeButtonClickListener,
+                                            UserDTO appUserDetails) {
         this.tracksList = tracksList;
         this.appContext = appContext;
         this.onTrackInfoClickListener = onTrackInfoClickListener;
         this.onLikeButtonClickListener = onLikeButtonClickListener;
+        this.appUserDetails = appUserDetails;
     }
 
     @Override
@@ -60,8 +63,14 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
         ImageUtil.loadAlbumArt(appContext, track.getMetadata().getAlbumId(), holder.thumbnail);
         holder.actionButtonsLayout.setVisibility(View.VISIBLE);
         holder.noOfLikes.setText(track.getLikes().size() + "");
+        if(track.getLikes().contains(appUserDetails.getId())) {
+            ImageUtil.colorImageViewDrawable(appContext, holder.likeButton, R.color.colorPrimary);
+        } else {
+            ImageUtil.colorImageViewDrawable(appContext, holder.likeButton, R.color.secondaryTextColor);
+        }
         holder.noOfShares.setText(track.getSocialActivities().size() + "");
         holder.userRating.setRating(track.getRating() == null ? (float) 0.0 : track.getRating().floatValue());
+        holder.itemView.setBackgroundColor(android.graphics.Color.WHITE);
     }
 
     @Override
@@ -70,7 +79,6 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
     }
 
     public class UserProfileTrackRowHolder extends RecyclerView.ViewHolder {
-        private static final int RANGE_THRESHOLD = 10;
         private ImageView thumbnail;
         private TextView trackTitle;
         private TextView trackArtist;
@@ -115,6 +123,8 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
                     onLikeButtonClickListener.onLikeButtonClick(getAdapterPosition(), tracksList);
                 }
             });
+
+            //options.setOnClickListener();
         }
     }
 

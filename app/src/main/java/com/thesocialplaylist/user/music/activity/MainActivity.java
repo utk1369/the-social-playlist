@@ -1,10 +1,14 @@
 package com.thesocialplaylist.user.music.activity;
 
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -43,6 +47,7 @@ import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
+    private final int PERMISSIONS_REQUEST_READ_STORAGE = 11;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
@@ -125,6 +130,39 @@ public class MainActivity extends AppCompatActivity {
         login((UserDTO) getIntent().getSerializableExtra("USER_FB_DETAILS"));
     }
 
+    private void checkPermissions() {
+        int isPermitted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if(isPermitted != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_READ_STORAGE);
+        } else {
+            init();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_READ_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    init();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+        }
+    }
+
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Feed");
@@ -137,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+        //Permission check
+        checkPermissions();
     }
 
     private void updateUserProfileInCache(UserDTO updatedUserDTO) {

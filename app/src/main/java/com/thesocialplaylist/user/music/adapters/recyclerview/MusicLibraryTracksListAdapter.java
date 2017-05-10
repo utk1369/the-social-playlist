@@ -1,25 +1,16 @@
 package com.thesocialplaylist.user.music.adapters.recyclerview;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.thesocialplaylist.user.music.R;
-import com.thesocialplaylist.user.music.activity.musicplayer.youtube.YoutubeLinker;
-import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
-import com.thesocialplaylist.user.music.enums.ExternalLinkType;
-import com.thesocialplaylist.user.music.enums.TracksListMode;
 import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import java.util.List;

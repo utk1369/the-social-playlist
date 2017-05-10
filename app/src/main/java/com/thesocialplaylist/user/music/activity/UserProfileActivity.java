@@ -162,7 +162,6 @@ public class UserProfileActivity extends AppCompatActivity
     }
 
     public void likeUnlikeSong(String likedBy, String songOwnedBy, final int idxSongLiked) {
-        Toast.makeText(UserProfileActivity.this, "Connecting to server...", Toast.LENGTH_SHORT).show();
         SongDTO songLiked = userDetails.getSongs().get(idxSongLiked);
         if(songLiked.getLikes() == null)
             songLiked.setLikes(new ArrayList<String>());
@@ -194,7 +193,7 @@ public class UserProfileActivity extends AppCompatActivity
 
     private void refreshScreen() {
 
-        tracksListFragment = TracksListFragment.newInstance(userDetails.getSongs(), TracksListMode.USER_PROFILE_MODE);
+        tracksListFragment = TracksListFragment.newInstance(userDetails.getSongs(), TracksListMode.USER_PROFILE_MODE, appUserDetails);
         friendsListFragment = FriendsListFragment.newInstance(userDetails.getFriends(), LinearLayoutManager.VERTICAL);
         activitiesFragment = ActivitiesFragment.newInstance(userActivities);
 
@@ -227,11 +226,13 @@ public class UserProfileActivity extends AppCompatActivity
 
     @Override
     public void onLikeButtonClick(int position, List<SongDTO> tracksList) {
+        Toast.makeText(UserProfileActivity.this, "Connecting to server...", Toast.LENGTH_SHORT).show();
         likeUnlikeSong(appUserDetails.getId(), userDetails.getId(), position);
     }
 
     @Override
     public void onTrackInfoClick(int position, List<SongDTO> tracksList) {
+        Toast.makeText(UserProfileActivity.this, "Searching in youtube...", Toast.LENGTH_SHORT).show();
         AppUtil.searchSongOnYoutube(tracksList.get(position).getMetadata(), this);
     }
 }
