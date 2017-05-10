@@ -130,12 +130,16 @@ public class UserDataAndRelationsManager {
         }
     }
 
-    public void syncSongsForUser() {
+    public void saveSongsToServer(String userId, List<SongDTO> songsToBeSyncedToServer, Callback<List<SongDTO>> callback) {
+        Call<List<SongDTO>> syncSongsCall = userApi.saveSongs(userId, songsToBeSyncedToServer);
+        syncSongsCall.enqueue(callback);
+    }
+
+    public void syncDbSongsToServer() {
         final UserDTO userDTO = getAppUserDataFromCache();
         List<SongDTO> songsToBeSynced = musicLibraryManager.getAllSongsToBeSynced();
         Log.i("USER_DATA_AND_REL_MGR", "No of songs to be synced: " + songsToBeSynced.size());
-        Call<List<SongDTO>> syncSongs = userApi.saveSongs(userDTO.getId(), songsToBeSynced);
-        syncSongs.enqueue(new Callback<List<SongDTO>>() {
+        saveSongsToServer(userDTO.getId(), songsToBeSynced, new Callback<List<SongDTO>>() {
             @Override
             public void onResponse(Call<List<SongDTO>> call, Response<List<SongDTO>> response) {
                 Log.i("USER_DATA_AND_REL_MGR", "Songs Sync success.");
@@ -169,6 +173,6 @@ public class UserDataAndRelationsManager {
 
     @Subscribe(threadMode =  ThreadMode.BACKGROUND)
     public void onTracksSyncRequest(SyncTracksEvent syncTracksEvent) {
-        syncSongsForUser();
+        syncDbSongsToServer();
     }
 }

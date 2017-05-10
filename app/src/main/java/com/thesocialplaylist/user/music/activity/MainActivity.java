@@ -77,9 +77,8 @@ public class MainActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_person_black_48dp)
                 .error(R.drawable.ic_person_black_48dp)
                 .into(userProfileBtn);
-        Toast.makeText(this, "Friends Size: " + (getUserDTO().getFriends() == null ?
-                "null": getUserDTO().getFriends().size() + ""), Toast.LENGTH_SHORT).show();
-        //AppUtil.replaceFragments(getSupportFragmentManager(), R.id.);
+        /*Toast.makeText(this, "Friends Size: " + (getUserDTO().getFriends() == null ?
+                "null": getUserDTO().getFriends().size() + ""), Toast.LENGTH_SHORT).show();*/
     }
 
     private void init() {
@@ -112,9 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(userProfileIntent);
             }
         });
-
-        setScreenDetails();
-
         friendsListFragment = FriendsListFragment.newInstance(getUserDTO().getFriends(), LinearLayoutManager.VERTICAL);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -125,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        setScreenDetails();
         login((UserDTO) getIntent().getSerializableExtra("USER_FB_DETAILS"));
     }
 
@@ -168,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
         UserDTO userDetails = getUserDetailsFromCache();
         setUserDTO(userDetails);
         setScreenDetails();
+        FriendsListFragment frag = (FriendsListFragment) viewPager.getAdapter().instantiateItem(viewPager, 0);
+        friendsListFragment.updateDataSet(userDetails.getFriends());
     }
 
     private void login(final UserDTO userDetails) {

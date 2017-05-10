@@ -1,5 +1,10 @@
 package com.thesocialplaylist.user.music.activity.musicplayer;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -12,6 +17,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
+import com.thesocialplaylist.user.music.adapters.recyclerview.MusicLibraryTracksListAdapter;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.AlbumsGridFragment;
@@ -20,12 +26,14 @@ import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.Tracks
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
+import com.thesocialplaylist.user.music.service.MusicService;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class MusicLibraryActivity extends AppCompatActivity {
+public class MusicLibraryActivity extends AppCompatActivity
+        implements MusicLibraryTracksListAdapter.OnTrackItemClickListener, MusicLibraryTracksListAdapter.OnOptionsButtonClickListener {
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -36,8 +44,26 @@ public class MusicLibraryActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private List<SongDTO> songDTOs;
 
+    private MusicService musicService;
+    private Boolean isBoundToService;
+    private Intent musicServiceIntent;
+
     @Inject
     MusicLibraryManager musicLibraryManager;
+
+    private ServiceConnection musicServiceConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MediaPlayerServiceBinder musicServiceBinder = (MusicService.MediaPlayerServiceBinder) service;
+            musicService = musicServiceBinder.getMusicService();
+            isBoundToService = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBoundToService = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +105,40 @@ public class MusicLibraryActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(new AlbumsGridFragment(), "Albums");
         viewPagerAdapter.addFragment(new ArtistsListFragment(), "Artists");
         return viewPagerAdapter;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        musicServiceIntent = new Intent(this, MusicService.class);
+        startService(musicServiceIntent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bindService(musicServiceIntent, musicServiceConn, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unbindService(musicServiceConn);
+    }
+
+    @Override
+    public void onOptionsButtonClick(View v, int position, List<SongDTO> tracksList) {
+
+    }
+
+    @Override
+    public void onTrackItemClick(View v, int position, List<SongDTO> tracksList) {
+        musicService.setCurrentPlayingPosition(position);
+        try {
+            musicService.playSong(tracksList, position);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

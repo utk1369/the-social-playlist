@@ -13,13 +13,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:fontFamily="sans-serif-light"
             android:gravity="start|center"/>
         <ImageView
             android:id="@+id/like_btn"
-            android:layout_width="16sp"
-            android:layout_height="16sp"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
             android:src="@drawable/ic_thumb_up_black_24dp"
             android:scaleType="fitCenter"
             android:layout_marginLeft="4sp"/>
@@ -38,13 +38,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:fontFamily="sans-serif-light"
             android:gravity="center"/>
         <ImageView
             android:id="@+id/share_btn"
-            android:layout_width="16sp"
-            android:layout_height="16sp"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
             android:src="@drawable/ic_share_black_48dp"
             android:scaleType="fitCenter"
             android:layout_marginLeft="4sp"/>

@@ -27,8 +27,8 @@ import java.io.FileNotFoundException;
 
 public class ImageUtil {
 
-    public static void loadAlbumArt(Context context, long albumId, ImageView albumArtImageView) {
-        loadImageUsingPicasso(context, getAlbumArtUri(albumId),
+    public static void loadAlbumArt(Context context, Long albumId, ImageView albumArtImageView) {
+        loadImageUsingPicasso(context, (albumId == null ? null : getAlbumArtUri(albumId)),
                 albumArtImageView,
                 getDrawableResource(context, R.drawable.ic_audiotrack_black_48dp, context.getTheme()),
                 getDrawableResource(context, R.drawable.ic_audiotrack_black_48dp, context.getTheme())
@@ -44,7 +44,7 @@ public class ImageUtil {
                 .into(imageView);
     }
 
-    private static Uri getAlbumArtUri(long albumId) {
+    private static Uri getAlbumArtUri(Long albumId) {
         Uri albumsUri = Uri.parse("content://media/external/audio/albumart");
         Uri albumArtUri = ContentUris.withAppendedId(albumsUri, albumId);
         return albumArtUri;

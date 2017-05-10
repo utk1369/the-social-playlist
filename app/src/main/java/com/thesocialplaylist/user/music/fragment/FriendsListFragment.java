@@ -1,5 +1,6 @@
 package com.thesocialplaylist.user.music.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -107,10 +108,17 @@ public class FriendsListFragment extends Fragment {
         friendsListRecyclerView.setLayoutManager(friendsListLayoutManager);
     }
 
+    public void updateDataSet(List<FriendDTO> updatedFriendsList) {
+        if(listOrientation == LinearLayoutManager.VERTICAL) {
+            verticalFriendsListAdapter.refreshFriendsList(updatedFriendsList);
+        } else if(listOrientation == LinearLayoutManager.HORIZONTAL) {
+            //horizontalFriendsListAdapter.refreshFriendsList(updatedFriendsList);
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.i("entered OnAttach", "");
     }
 
     @Override

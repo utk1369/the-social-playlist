@@ -17,19 +17,22 @@ import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
+import com.thesocialplaylist.user.music.adapters.recyclerview.UserProfileTracksListViewAdapter;
 import com.thesocialplaylist.user.music.api.declaration.UserApi;
 import com.thesocialplaylist.user.music.dto.PopulateDTO;
 import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserProfileRequestDTO;
-import com.thesocialplaylist.user.music.enums.SocialActivityDomain;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
 import com.thesocialplaylist.user.music.fragment.ActivitiesFragment;
 import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.TracksListFragment;
 import com.thesocialplaylist.user.music.manager.UserDataAndRelationsManager;
+import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.CollectionUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,7 +42,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity
+        implements UserProfileTracksListViewAdapter.OnLikeButtonClickListener, UserProfileTracksListViewAdapter.OnTrackInfoClickListener {
 
     private ActionBar actionBar;
     private ViewPager viewPager;
@@ -52,6 +56,11 @@ public class UserProfileActivity extends AppCompatActivity {
     private List<SocialActivityDTO> userActivities;
 
     private ProgressDialog loading;
+
+    private TracksListFragment tracksListFragment;
+    private FriendsListFragment friendsListFragment;
+    private ActivitiesFragment activitiesFragment;
+    private UserDTO appUserDetails;
 
     public void setUserDetails(UserDTO userDetails) {
         this.userDetails = userDetails;
@@ -79,18 +88,20 @@ public class UserProfileActivity extends AppCompatActivity {
 
         ((TheSocialPlaylistApplication) getApplication()).getUserDataAndRelationsManagerComponent().inject(this);
         userApi = userDataAndRelationsManager.getUserApi();
+
+        String userId = getIntent().getStringExtra("USER_ID");
+        getUserProfile(userId);
+        getUserActivities(userId);
+
         actionBar = getSupportActionBar();
-        actionBar.setTitle("Profile");
+        actionBar.setTitle("User Profile");
+        appUserDetails = userDataAndRelationsManager.getAppUserDataFromCache();
 
         userName = (TextView) findViewById(R.id.user_name);
         userStatus = (TextView) findViewById(R.id.user_status);
         userImg = (CircularImageView) findViewById(R.id.user_img);
 
         loading = ProgressDialog.show(UserProfileActivity.this, "Please wait", "Fetching User Profile");
-
-        String userId = getIntent().getStringExtra("USER_ID");
-        getUserProfile(userId);
-        getUserActivities(userId);
     }
 
     private void getUserActivities(final String userId) {
@@ -150,7 +161,43 @@ public class UserProfileActivity extends AppCompatActivity {
         });
     }
 
+    public void likeUnlikeSong(String likedBy, String songOwnedBy, final int idxSongLiked) {
+        Toast.makeText(UserProfileActivity.this, "Connecting to server...", Toast.LENGTH_SHORT).show();
+        SongDTO songLiked = userDetails.getSongs().get(idxSongLiked);
+        if(songLiked.getLikes() == null)
+            songLiked.setLikes(new ArrayList<String>());
+
+        if(songLiked.getLikes().contains(likedBy))
+            songLiked.setLikes(CollectionUtil.findAndRemoveFromList(songLiked.getLikes(), likedBy));
+        else
+            songLiked.getLikes().add(likedBy);
+
+        userDataAndRelationsManager.saveSongsToServer(songOwnedBy, Arrays.asList(songLiked), new Callback<List<SongDTO>>() {
+            @Override
+            public void onResponse(Call<List<SongDTO>> call, Response<List<SongDTO>> response) {
+                if(response.body() != null) {
+                    Log.i("USER_PROFILE_ACTIVITY", "Liked/Unliked.");
+                    tracksListFragment.updateDataRange(response.body(), idxSongLiked, idxSongLiked);
+                } else {
+                    Log.i("USER_PROFILE_ACTIVITY", "Like/Unlike failed");
+                    Toast.makeText(UserProfileActivity.this, "Failed to update.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SongDTO>> call, Throwable t) {
+                Log.i("USER_PROFILE_ACTIVITY", "Like/Unlike failed");
+                Toast.makeText(UserProfileActivity.this, "Failed to update.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void refreshScreen() {
+
+        tracksListFragment = TracksListFragment.newInstance(userDetails.getSongs(), TracksListMode.USER_PROFILE_MODE);
+        friendsListFragment = FriendsListFragment.newInstance(userDetails.getFriends(), LinearLayoutManager.VERTICAL);
+        activitiesFragment = ActivitiesFragment.newInstance(userActivities);
+
         loading.dismiss();
         userName.setText(userDetails.getName());
         userStatus.setText(userDetails.getStatus());
@@ -172,10 +219,19 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), UserProfileActivity.this);
-        viewPagerAdapter.addFragment(FriendsListFragment.newInstance(userDetails.getFriends(), LinearLayoutManager.VERTICAL), "Friends");
-        viewPagerAdapter.addFragment(TracksListFragment.newInstance(userDetails.getSongs(), TracksListMode.USER_PROFILE_MODE), "Songs");
-        viewPagerAdapter.addFragment(ActivitiesFragment.newInstance(userActivities), "Activities");
+        viewPagerAdapter.addFragment(friendsListFragment, "Friends");
+        viewPagerAdapter.addFragment(tracksListFragment, "Songs");
+        viewPagerAdapter.addFragment(activitiesFragment, "Activities");
         return viewPagerAdapter;
     }
 
+    @Override
+    public void onLikeButtonClick(int position, List<SongDTO> tracksList) {
+        likeUnlikeSong(appUserDetails.getId(), userDetails.getId(), position);
+    }
+
+    @Override
+    public void onTrackInfoClick(int position, List<SongDTO> tracksList) {
+        AppUtil.searchSongOnYoutube(tracksList.get(position).getMetadata(), this);
+    }
 }

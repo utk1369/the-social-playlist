@@ -29,8 +29,9 @@ public class VerticalFriendsListAdapter extends RecyclerView.Adapter<VerticalFri
         this.appContext = context;
     }
 
-    public void setFriendsList(List<FriendDTO> friendsList) {
-        this.friendsList = friendsList;
+    public void refreshFriendsList(List<FriendDTO> updatedFriendsList) {
+        this.friendsList = updatedFriendsList;
+        notifyDataSetChanged();
     }
 
     public void setFriendsListItemClickListener(OnRecyclerItemClickListener friendsListItemClickListener) {
