@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 
+import com.thesocialplaylist.user.music.ErrorTemplateFragment;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.adapters.recyclerview.MusicLibraryTracksListAdapter;
 import com.thesocialplaylist.user.music.dto.SongDTO;
@@ -27,6 +28,7 @@ import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
+import com.thesocialplaylist.user.music.utils.AppUtil;
 
 import java.util.List;
 
@@ -84,7 +86,6 @@ public class MusicLibraryActivity extends AppCompatActivity
     }
 
     private void initialize() {
-        songDTOs = musicLibraryManager.getAllSongs();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
@@ -100,9 +101,23 @@ public class MusicLibraryActivity extends AppCompatActivity
 
     private ViewPagerAdapter getViewPagerAdapter() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), MusicLibraryActivity.this);
-        viewPagerAdapter.addFragment(TracksListFragment.newInstance(
-                musicLibraryManager.getAllSongs(), TracksListMode.MUSIC_PLAYER_MODE), "Songs");
-        viewPagerAdapter.addFragment(new AlbumsGridFragment(), "Albums");
+
+        try {
+            songDTOs = musicLibraryManager.getAllSongs();
+            viewPagerAdapter.addFragment(TracksListFragment.newInstance(
+                    songDTOs, TracksListMode.MUSIC_PLAYER_MODE), "Songs");
+        } catch (SecurityException e) {
+            viewPagerAdapter.addFragment(
+                    AppUtil.getErrorFragment("Permission denied.", R.drawable.ic_search_black_36dp), "Songs");
+        }
+
+        try {
+            viewPagerAdapter.addFragment(AlbumsGridFragment.newInstance(
+                    musicLibraryManager.getAllAlbumsAsList(this)), "Albums");
+        } catch(SecurityException e) {
+            viewPagerAdapter.addFragment(
+                    AppUtil.getErrorFragment("Permission denied.", R.drawable.ic_search_black_36dp), "Albums");
+        }
         viewPagerAdapter.addFragment(new ArtistsListFragment(), "Artists");
         return viewPagerAdapter;
     }
@@ -136,6 +151,7 @@ public class MusicLibraryActivity extends AppCompatActivity
         musicService.setCurrentPlayingPosition(position);
         try {
             musicService.playSong(tracksList, position);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

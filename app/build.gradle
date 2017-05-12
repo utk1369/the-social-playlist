@@ -42,6 +42,9 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/YouTubeAndroidPlayerApi.jar')
+    compile('com.google.http-client:google-http-client-gson:1.21.0') {
+        exclude module: 'httpclient'
+    }
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.google.android.gms:play-services-appindexing:9.8.0'
@@ -51,22 +54,13 @@ dependencies {
     compile 'com.android.support:support-v4:25.0.0'
     compile 'com.google.apis:google-api-services-youtube:v3-rev178-1.22.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile ('com.google.http-client:google-http-client-gson:1.21.0') {
-        exclude module: 'httpclient'
-    }
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile 'org.greenrobot:eventbus:3.0.0'
-
-    //Dagger
-    apt 'com.google.dagger:dagger-compiler:2.5'
     compile 'com.google.dagger:dagger:2.5'
-    provided 'javax.annotation:jsr250-api:1.0'
-
     compile 'org.apache.commons:commons-lang3:3.4'
-
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-
     compile 'com.mikhaellopez:circularimageview:3.0.2'
-
+    apt 'com.google.dagger:dagger-compiler:2.5'
+    provided 'javax.annotation:jsr250-api:1.0'
 }

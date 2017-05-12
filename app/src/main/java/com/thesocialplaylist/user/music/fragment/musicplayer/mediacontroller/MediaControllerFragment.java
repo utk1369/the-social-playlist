@@ -16,12 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thesocialplaylist.user.music.R;
-import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
-import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
 import com.thesocialplaylist.user.music.utils.ImageUtil;
 
@@ -29,9 +27,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Created by user on 16-04-2016.
@@ -50,8 +47,15 @@ public class MediaControllerFragment extends Fragment {
     private boolean isBoundToService;
     private List<SongDTO> songsList;
 
-    @Inject
-    MusicLibraryManager musicLibraryManager;
+    private static final String ARG_SONGS_LIST = "SongsList";
+
+    public static MediaControllerFragment newInstance(List<SongDTO> songsList) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_SONGS_LIST, (Serializable) songsList);
+        MediaControllerFragment mediaControllerFragment = new MediaControllerFragment();
+        mediaControllerFragment.setArguments(args);
+        return mediaControllerFragment;
+    }
 
     @Override
     public void onStart() {
@@ -65,7 +69,6 @@ public class MediaControllerFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MediaPlayerServiceBinder musicServiceBinder = (MusicService.MediaPlayerServiceBinder) service;
             musicService = musicServiceBinder.getMusicService();
-            songsList = musicLibraryManager.getAllSongs();
             musicService.setNowPlayingList(songsList);
             populateSongAttributes(musicService.getCurrentPlayingPosition());
             isBoundToService = true;
@@ -78,6 +81,9 @@ public class MediaControllerFragment extends Fragment {
     };
 
     private void populateSongAttributes(int currentPlayingPosition) {
+        if(songsList == null || songsList.size() == 0)
+            return;
+
         SongDTO nowPlaying = songsList.get(currentPlayingPosition);
         setPlayPauseButton();
         songTitle.setText(nowPlaying.getMetadata().getTitle());
@@ -97,10 +103,15 @@ public class MediaControllerFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle savedInstanceState){
         fragmentView =  inflater.inflate(R.layout.media_controller_fragment, vg, false);
-        ((TheSocialPlaylistApplication)getActivity().getApplication()).getMusicLibraryManagerComponent().inject(this);
         initialize();
         assignButtonActions();
         return fragmentView;
@@ -108,12 +119,12 @@ public class MediaControllerFragment extends Fragment {
 
     @Override
     public void onResume() {
-        //Toast.makeText(appContext, "Resuming Playback in Fragment", Toast.LENGTH_SHORT).show();
         super.onResume();
         appContext.bindService(musicServiceIntent, musicServiceConn, Context.BIND_AUTO_CREATE);
     }
 
     private void initialize() {
+        songsList = (List<SongDTO>) getArguments().getSerializable(ARG_SONGS_LIST);
         appContext = getActivity().getApplicationContext();
         albumArt = (ImageView) fragmentView.findViewById(R.id.album_art);
         songTitle = (TextView) fragmentView.findViewById(R.id.song_title);

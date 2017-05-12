@@ -107,6 +107,7 @@ public class MusicLibraryTracksListAdapter extends RecyclerView.Adapter<MusicLib
                 public void onClick(View view) {
                     selectedRow = getAdapterPosition();
                     if(onTrackItemClickListener != null) {
+                        notifyItemChanged(getAdapterPosition());
                         notifyItemRangeChanged(Math.max(0, getAdapterPosition() - RANGE_THRESHOLD),
                                 Math.min(tracksList.size() - (getAdapterPosition() - RANGE_THRESHOLD), 2 * RANGE_THRESHOLD));
                         onTrackItemClickListener.onTrackItemClick(itemView, getAdapterPosition(), tracksList);

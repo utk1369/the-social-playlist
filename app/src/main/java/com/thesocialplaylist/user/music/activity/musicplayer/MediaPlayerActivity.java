@@ -266,8 +266,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
     }
 
     private void populateSongAttributes(int position) {
-        if(songsList == null) {
-            songTitle.setText("Select a SongDTO!");
+        if(songsList == null || songsList.size()== 0) {
+            songTitle.setText("Select a Song!");
             artist.setText("");
             album.setText("");
             return;

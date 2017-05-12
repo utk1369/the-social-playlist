@@ -13,11 +13,14 @@ import android.view.ViewGroup;
 
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.dto.AlbumDTO;
+import com.thesocialplaylist.user.music.dto.SongDTO;
+import com.thesocialplaylist.user.music.fragment.musicplayer.mediacontroller.MediaControllerFragment;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.adapters.recyclerview.AlbumGridAdapter;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.activity.musicplayer.AlbumDetailsActivity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,8 +37,16 @@ public class AlbumsGridFragment extends Fragment {
 
     private GridLayoutManager albumGridLayoutManager;
 
-    @Inject
-    MusicLibraryManager musicLibraryManager;
+    private static final String ARG_ALBUMS_LIST = "AlbumsList";
+
+    public static AlbumsGridFragment newInstance(List<AlbumDTO> albumDTOs) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_ALBUMS_LIST, (Serializable) albumDTOs);
+        AlbumsGridFragment albumsGridFragment = new AlbumsGridFragment();
+        albumsGridFragment.setArguments(args);
+        return albumsGridFragment;
+    }
+
 
     public AlbumsGridFragment() {
 
@@ -50,15 +61,16 @@ public class AlbumsGridFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_albums_grid, container, false);
-        ((TheSocialPlaylistApplication)getActivity().getApplication()).getMusicLibraryManagerComponent().inject(this);
         initialize();
         return fragmentView;
     }
 
     private void initialize() {
+
         albumGrid = (RecyclerView) fragmentView.findViewById(R.id.album_grid);
         appContext = getActivity().getApplicationContext();
-        albumDTOs = musicLibraryManager.getAllAlbumsAsList(appContext);
+
+        albumDTOs = (List<AlbumDTO>) getArguments().getSerializable(ARG_ALBUMS_LIST);
         Log.i("No of Albums = ", albumDTOs.size() + "");
         albumsAdapter = new AlbumGridAdapter(albumDTOs, appContext);
         albumsAdapter.setGridClickListener(new AlbumGridAdapter.GridClickListener() {

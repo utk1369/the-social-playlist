@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.thesocialplaylist.user.music.ErrorTemplateFragment;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.dto.SongMetadataDTO;
 
@@ -47,5 +48,9 @@ public class AppUtil {
         intent.putExtra("query", metadata.getTitle() + " " + metadata.getArtist());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         appContext.startActivity(intent);
+    }
+
+    public static Fragment getErrorFragment(String message, int icon) {
+        return ErrorTemplateFragment.newInstance(message, icon);
     }
 }

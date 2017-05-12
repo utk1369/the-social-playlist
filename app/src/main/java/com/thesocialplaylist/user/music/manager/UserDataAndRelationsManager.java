@@ -44,6 +44,10 @@ public class UserDataAndRelationsManager {
         return userApi;
     }
 
+    public MusicLibraryManager getMusicLibraryManager() {
+        return musicLibraryManager;
+    }
+
     public UserDataAndRelationsManager(UserApi userApi, UserRelCacheDAO userRelCacheDAO, MusicLibraryManager musicLibraryManager) {
         this.userRelCacheDAO = userRelCacheDAO;
         this.userApi = userApi;

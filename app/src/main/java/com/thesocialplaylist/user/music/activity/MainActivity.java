@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -17,11 +18,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
+import com.thesocialplaylist.user.music.ErrorTemplateFragment;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
@@ -29,13 +32,17 @@ import com.thesocialplaylist.user.music.activity.musicplayer.MediaPlayerActivity
 import com.thesocialplaylist.user.music.api.declaration.UserApi;
 import com.thesocialplaylist.user.music.dto.FriendDTO;
 import com.thesocialplaylist.user.music.dto.PopulateDTO;
+import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserLoginRequestDTO;
 import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
+import com.thesocialplaylist.user.music.fragment.musicplayer.mediacontroller.MediaControllerFragment;
+import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.manager.UserDataAndRelationsManager;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache;
 import com.thesocialplaylist.user.music.utils.AppUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,12 +63,17 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton mediaPlayerBtn;
     private CircularImageView userProfileBtn;
 
+    private FrameLayout mediaControllerFragmentLayout;
+    private Fragment mediaControllerFragment;
+
     private FriendsListFragment friendsListFragment;
 
     @Inject
     public UserDataAndRelationsManager userDataAndRelationsManager;
 
     private UserApi userApi;
+
+    private MusicLibraryManager musicLibraryManager;
 
     private UserDTO userDTO;
 
@@ -82,14 +94,13 @@ public class MainActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_person_black_48dp)
                 .error(R.drawable.ic_person_black_48dp)
                 .into(userProfileBtn);
-        /*Toast.makeText(this, "Friends Size: " + (getUserDTO().getFriends() == null ?
-                "null": getUserDTO().getFriends().size() + ""), Toast.LENGTH_SHORT).show();*/
     }
 
     private void init() {
 
         ((TheSocialPlaylistApplication) getApplication()).getUserDataAndRelationsManagerComponent().inject(this);
         userApi = userDataAndRelationsManager.getUserApi();
+        musicLibraryManager = userDataAndRelationsManager.getMusicLibraryManager();
 
         //load the cached User Data in the beginning.
         setUserDTO(getUserDetailsFromCache());
@@ -116,6 +127,24 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(userProfileIntent);
             }
         });
+
+        mediaControllerFragmentLayout = (FrameLayout) findViewById(R.id.media_controls_fragment);
+        mediaControllerFragmentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MediaPlayerActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        try {
+            mediaControllerFragment = MediaControllerFragment.newInstance(musicLibraryManager.getAllSongs());
+            AppUtil.replaceFragments(getSupportFragmentManager(), R.id.media_controls_fragment, mediaControllerFragment);
+        } catch(SecurityException e) {
+            AppUtil.replaceFragments(getSupportFragmentManager(), R.id.media_controls_fragment,
+                    ErrorTemplateFragment.newInstance(null, null));
+        }
+
         friendsListFragment = FriendsListFragment.newInstance(getUserDTO().getFriends(), LinearLayoutManager.VERTICAL);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -153,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     init();
 
                 } else {
-
+                    init();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }

@@ -38,6 +38,7 @@ public class TracksListFragment extends Fragment {
 
     private UserProfileTracksListViewAdapter.OnTrackInfoClickListener onTrackInfoClickListener;
     private UserProfileTracksListViewAdapter.OnLikeButtonClickListener onLikeButtonClickListener;
+    private UserProfileTracksListViewAdapter.OnLikeButtonLongClickListener onLikeButtonLongClickListener;
 
     private static final String TRACKS_LIST_KEY = "tracksList";
     private static final String TRACKS_LIST_MODE_KEY = "tracksListMode";
@@ -87,7 +88,7 @@ public class TracksListFragment extends Fragment {
         }
         else if(mode == TracksListMode.USER_PROFILE_MODE) {
             userProfileTracksListViewAdapter = new UserProfileTracksListViewAdapter(tracks, appContext,
-                    onTrackInfoClickListener, onLikeButtonClickListener, appUserDetails);
+                    onTrackInfoClickListener, onLikeButtonClickListener, onLikeButtonLongClickListener, appUserDetails);
             tracksList.setAdapter(userProfileTracksListViewAdapter);
         }
 
@@ -121,6 +122,7 @@ public class TracksListFragment extends Fragment {
             } else if(mode == TracksListMode.USER_PROFILE_MODE) {
                 onTrackInfoClickListener = (UserProfileTracksListViewAdapter.OnTrackInfoClickListener) context;
                 onLikeButtonClickListener = (UserProfileTracksListViewAdapter.OnLikeButtonClickListener) context;
+                onLikeButtonLongClickListener = (UserProfileTracksListViewAdapter.OnLikeButtonLongClickListener) context;
             }
         } catch (ClassCastException e) {
             Log.d("TRACKS LIST FRAGMENT", "activity cannot be cast to listeners");

@@ -23,10 +23,7 @@ import dagger.Component;
 @Component(modules = {MusicLibraryManagerModule.class, SQLiteCacheDAOManagerModule.class, AppModule.class})
 public interface MusicLibraryManagerComponent {
     void inject(AlbumDetailsActivity albumDetailsActivity);
-    void inject(MediaControllerFragment mediaControllerFragment);
     void inject(MusicLibraryActivity musicLibraryActivity);
-    void inject(AlbumsGridFragment albumsGridFragment);
     void inject(MediaPlayerActivity mediaPlayerActivity);
-    void inject(MusicService musicService);
     void inject(YoutubeSearchFragment youtubeSearchFragment);
 }

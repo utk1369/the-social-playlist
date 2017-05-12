@@ -1,15 +1,12 @@
 package com.thesocialplaylist.user.music.service;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.session.MediaSession;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -24,18 +21,12 @@ import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.events.models.TracksListUpdateEvent;
-import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Created by user on 08-04-2016.
@@ -54,9 +45,6 @@ public class MusicService extends Service
     private AudioFocusChangeListener audioFocusChangeListener = new AudioFocusChangeListener();
 
     private EventBus mEventBus = EventBus.getDefault();
-
-    @Inject
-    MusicLibraryManager musicLibraryManager;
 
     public int getCurrentPlayingPosition() {
         return currentPlayingPosition;
@@ -185,8 +173,6 @@ public class MusicService extends Service
         currentPlayingPosition = 0;
 
         audioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
-
-        ((TheSocialPlaylistApplication)getApplication()).getMusicLibraryManagerComponent().inject(this);
     }
 
     public void playSong(List<SongDTO> nowPlayingList, int position) throws IOException {

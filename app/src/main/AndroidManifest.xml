@@ -103,7 +103,11 @@
             android:name=".activity.musicplayer.SongShareActivity"
             android:label="@string/title_activity_song_share"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.UserListActivity"
+            android:label="@string/title_activity_user_list"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

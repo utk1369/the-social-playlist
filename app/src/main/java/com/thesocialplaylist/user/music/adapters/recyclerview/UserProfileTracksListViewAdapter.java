@@ -28,6 +28,7 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
     private Context appContext;
     private OnTrackInfoClickListener onTrackInfoClickListener;
     private OnLikeButtonClickListener onLikeButtonClickListener;
+    private OnLikeButtonLongClickListener onLikeButtonLongClickListener;
     private UserDTO appUserDetails;
 
 
@@ -39,13 +40,20 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
         public void onLikeButtonClick(int position, List<SongDTO> tracksList);
     }
 
+    public interface OnLikeButtonLongClickListener {
+        public void onLikeButtonLongClick(int position, List<SongDTO> tracksList);
+    }
+
     public UserProfileTracksListViewAdapter(List<SongDTO> tracksList, Context appContext,
-                                            OnTrackInfoClickListener onTrackInfoClickListener, OnLikeButtonClickListener onLikeButtonClickListener,
+                                            OnTrackInfoClickListener onTrackInfoClickListener,
+                                            OnLikeButtonClickListener onLikeButtonClickListener,
+                                            OnLikeButtonLongClickListener onLikeButtonLongClickListener,
                                             UserDTO appUserDetails) {
         this.tracksList = tracksList;
         this.appContext = appContext;
         this.onTrackInfoClickListener = onTrackInfoClickListener;
         this.onLikeButtonClickListener = onLikeButtonClickListener;
+        this.onLikeButtonLongClickListener = onLikeButtonLongClickListener;
         this.appUserDetails = appUserDetails;
     }
 
@@ -121,6 +129,14 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
                 @Override
                 public void onClick(View view) {
                     onLikeButtonClickListener.onLikeButtonClick(getAdapterPosition(), tracksList);
+                }
+            });
+
+            likeButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    onLikeButtonLongClickListener.onLikeButtonLongClick(getAdapterPosition(), tracksList);
+                    return true;
                 }
             });
 

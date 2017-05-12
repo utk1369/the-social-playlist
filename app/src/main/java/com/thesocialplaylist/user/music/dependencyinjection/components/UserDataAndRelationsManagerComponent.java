@@ -1,6 +1,7 @@
 package com.thesocialplaylist.user.music.dependencyinjection.components;
 
 import com.thesocialplaylist.user.music.activity.MainActivity;
+import com.thesocialplaylist.user.music.activity.UserListActivity;
 import com.thesocialplaylist.user.music.activity.UserProfileActivity;
 import com.thesocialplaylist.user.music.activity.musicplayer.SongShareActivity;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.AppModule;
@@ -35,5 +36,7 @@ public interface UserDataAndRelationsManagerComponent {
     void inject(MainActivity mainActivity);
     void inject(UserProfileActivity userProfileActivity);
     void inject(SongShareActivity songShareActivity);
+    void inject(UserListActivity userListActivity);
+    //avoid injecting this into fragment
     void inject(ActivitiesFragment activitiesFragment);
 }

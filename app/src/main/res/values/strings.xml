@@ -27,4 +27,8 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_song_share">SongShareActivity</string>
+
+    <string name="default_error_message">Something went wrong. Please restart the app and try again.</string>
+    <string name="title_activity_user_list">UserListActivity</string>
+
 </resources>

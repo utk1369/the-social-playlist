@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.thesocialplaylist.user.music.ErrorTemplateFragment">
+
+    <ImageView
+        android:id="@+id/error_display_icon"
+        android:layout_width="match_parent"
+        android:layout_height="128sp"
+        android:layout_margin="16sp"
+        android:src="@drawable/ic_more_vert_black_24dp"/>
+
+
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16sp"
+        android:text="@string/default_error_message" />
+
+</LinearLayout>

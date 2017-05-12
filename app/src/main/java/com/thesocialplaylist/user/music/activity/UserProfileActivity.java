@@ -1,6 +1,7 @@
 package com.thesocialplaylist.user.music.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -43,7 +44,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserProfileActivity extends AppCompatActivity
-        implements UserProfileTracksListViewAdapter.OnLikeButtonClickListener, UserProfileTracksListViewAdapter.OnTrackInfoClickListener {
+        implements UserProfileTracksListViewAdapter.OnLikeButtonClickListener, UserProfileTracksListViewAdapter.OnTrackInfoClickListener,
+        UserProfileTracksListViewAdapter.OnLikeButtonLongClickListener {
 
     private ActionBar actionBar;
     private ViewPager viewPager;
@@ -234,5 +236,14 @@ public class UserProfileActivity extends AppCompatActivity
     public void onTrackInfoClick(int position, List<SongDTO> tracksList) {
         Toast.makeText(UserProfileActivity.this, "Searching in youtube...", Toast.LENGTH_SHORT).show();
         AppUtil.searchSongOnYoutube(tracksList.get(position).getMetadata(), this);
+    }
+
+    @Override
+    public void onLikeButtonLongClick(int position, List<SongDTO> tracksList) {
+        List<String> usersWhoLikedTheSong = tracksList.get(position).getLikes();
+        Intent usersListIntent = new Intent(this, UserListActivity.class);
+        usersListIntent.putStringArrayListExtra("userIds", (ArrayList<String>) usersWhoLikedTheSong);
+        usersListIntent.putExtra("titleKey", "Liked By");
+        startActivity(usersListIntent);
     }
 }
