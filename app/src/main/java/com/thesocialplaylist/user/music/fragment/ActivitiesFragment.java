@@ -46,6 +46,8 @@ public class ActivitiesFragment extends Fragment {
     @Inject
     UserDataAndRelationsManager userDataAndRelationsManager;
 
+    private ActivityListAdapter adapter;
+
     public ActivitiesFragment() {
         // Required empty public constructor
     }
@@ -88,13 +90,17 @@ public class ActivitiesFragment extends Fragment {
         activitiesListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.activities_list_recycler_view);
         appContext = getActivity().getApplicationContext();
 
-        ActivityListAdapter adapter = new ActivityListAdapter(socialActivityDTOs,
+        adapter = new ActivityListAdapter(socialActivityDTOs,
                 userDataAndRelationsManager.getAllUsersFromCacheAsMap(), getActivity().getApplicationContext());
 
         LinearLayoutManager activitiesListLayoutManager = new LinearLayoutManager(appContext);
         activitiesListLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         activitiesListRecyclerView.setAdapter(adapter);
         activitiesListRecyclerView.setLayoutManager(activitiesListLayoutManager);
+    }
+
+    public void updateDataSet(List<SocialActivityDTO> updatedListOfActivities) {
+        adapter.updateDataSet(updatedListOfActivities);
     }
 
     @Override

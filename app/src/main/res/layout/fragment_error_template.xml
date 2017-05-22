@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.thesocialplaylist.user.music.ErrorTemplateFragment">
+    tools:context="com.thesocialplaylist.user.music.fragment.ErrorTemplateFragment">
 
     <ImageView
         android:id="@+id/error_display_icon"

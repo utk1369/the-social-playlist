@@ -11,6 +11,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -46,4 +47,8 @@ public interface UserApi {
 
     @POST(value = "activities/search")
     Call<List<SocialActivityDTO>> searchActivities(@Body SocialActivityDTO searchPayload);
+
+    @GET(value = "activities/feed/{userId}")
+    Call<List<SocialActivityDTO>> getFeeds(@Path(value = "userId") String userId);
+
 }

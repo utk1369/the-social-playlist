@@ -68,4 +68,9 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
             caption = (TextView) itemView.findViewById(R.id.caption);
         }
     }
+
+    public void updateDataSet(List<SocialActivityDTO> updatedDataSet) {
+        this.activityList = updatedDataSet;
+        notifyDataSetChanged();
+    }
 }

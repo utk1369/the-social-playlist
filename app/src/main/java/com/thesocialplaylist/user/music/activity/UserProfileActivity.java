@@ -193,6 +193,30 @@ public class UserProfileActivity extends AppCompatActivity
         });
     }
 
+    public void updateViewsForSong(final int idxSongLiked) {
+        SongDTO songViewed = userDetails.getSongs().get(idxSongLiked);
+        songViewed.setViews(songViewed.getViews() + 1);
+
+        userDataAndRelationsManager.saveSongsToServer(userDetails.getId(), Arrays.asList(songViewed), new Callback<List<SongDTO>>() {
+            @Override
+            public void onResponse(Call<List<SongDTO>> call, Response<List<SongDTO>> response) {
+                if(response.body() != null) {
+                    Log.i("USER_PROFILE_ACTIVITY", "Song View updated");
+                    tracksListFragment.updateDataRange(response.body(), idxSongLiked, idxSongLiked);
+                } else {
+                    Log.i("USER_PROFILE_ACTIVITY", "Song View update failed");
+                    //Toast.makeText(UserProfileActivity.this, "Failed to update.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SongDTO>> call, Throwable t) {
+                Log.i("USER_PROFILE_ACTIVITY", "Song View updated failed");
+                //Toast.makeText(UserProfileActivity.this, "Failed to update.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void refreshScreen() {
 
         tracksListFragment = TracksListFragment.newInstance(userDetails.getSongs(), TracksListMode.USER_PROFILE_MODE, appUserDetails);
@@ -235,6 +259,7 @@ public class UserProfileActivity extends AppCompatActivity
     @Override
     public void onTrackInfoClick(int position, List<SongDTO> tracksList) {
         Toast.makeText(UserProfileActivity.this, "Searching in youtube...", Toast.LENGTH_SHORT).show();
+        updateViewsForSong(position);
         AppUtil.searchSongOnYoutube(tracksList.get(position).getMetadata(), this);
     }
 

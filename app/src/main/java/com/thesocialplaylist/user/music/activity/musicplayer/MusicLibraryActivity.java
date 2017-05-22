@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 
-import com.thesocialplaylist.user.music.ErrorTemplateFragment;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.adapters.recyclerview.MusicLibraryTracksListAdapter;
 import com.thesocialplaylist.user.music.dto.SongDTO;

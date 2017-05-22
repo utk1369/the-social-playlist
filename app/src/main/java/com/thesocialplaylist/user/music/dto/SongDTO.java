@@ -18,6 +18,8 @@ public class SongDTO implements Serializable{
 
     private Integer hits;
 
+    private Integer views;
+
     private Timestamp lastListenedAt;
 
     private List<String> likes;
@@ -64,6 +66,14 @@ public class SongDTO implements Serializable{
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getViews() {
+        return views;
+    }
+
+    public void setViews(Integer views) {
+        this.views = views;
     }
 
     public List<String> getLikes() {

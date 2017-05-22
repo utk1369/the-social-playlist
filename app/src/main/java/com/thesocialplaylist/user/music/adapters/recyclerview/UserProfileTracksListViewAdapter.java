@@ -77,6 +77,7 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
             ImageUtil.colorImageViewDrawable(appContext, holder.likeButton, R.color.secondaryTextColor);
         }
         holder.noOfShares.setText(track.getSocialActivities().size() + "");
+        holder.noOfViews.setText(track.getViews() + "");
         holder.userRating.setRating(track.getRating() == null ? (float) 0.0 : track.getRating().floatValue());
         holder.itemView.setBackgroundColor(android.graphics.Color.WHITE);
     }
@@ -94,6 +95,7 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
 
         //Action Buttons
         private LinearLayout actionButtonsLayout;
+        private TextView noOfViews;
         private TextView noOfLikes;
         private ImageView likeButton;
         private TextView noOfShares;
@@ -108,6 +110,7 @@ public class UserProfileTracksListViewAdapter extends RecyclerView.Adapter<UserP
             options = (ImageButton) itemView.findViewById(R.id.options);
 
             actionButtonsLayout = (LinearLayout) itemView.findViewById(R.id.action_btns);
+            noOfViews = (TextView) itemView.findViewById(R.id.no_of_views);
             noOfLikes = (TextView) itemView.findViewById(R.id.no_of_likes);
             likeButton = (ImageView)  itemView.findViewById(R.id.like_btn);
             noOfShares = (TextView) itemView.findViewById(R.id.no_of_shares);

@@ -24,7 +24,9 @@ import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
-import com.thesocialplaylist.user.music.ErrorTemplateFragment;
+import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
+import com.thesocialplaylist.user.music.fragment.ActivitiesFragment;
+import com.thesocialplaylist.user.music.fragment.ErrorTemplateFragment;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.ViewPagerAdapter;
@@ -32,7 +34,6 @@ import com.thesocialplaylist.user.music.activity.musicplayer.MediaPlayerActivity
 import com.thesocialplaylist.user.music.api.declaration.UserApi;
 import com.thesocialplaylist.user.music.dto.FriendDTO;
 import com.thesocialplaylist.user.music.dto.PopulateDTO;
-import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
 import com.thesocialplaylist.user.music.dto.UserLoginRequestDTO;
 import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mediaControllerFragment;
 
     private FriendsListFragment friendsListFragment;
+    private ActivitiesFragment activitiesFragment;
 
     @Inject
     public UserDataAndRelationsManager userDataAndRelationsManager;
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     private MusicLibraryManager musicLibraryManager;
 
     private UserDTO userDTO;
+
+    private List<SocialActivityDTO> userFeeds;
 
     public UserDTO getUserDTO() {
         return userDTO;
@@ -102,8 +106,12 @@ public class MainActivity extends AppCompatActivity {
         userApi = userDataAndRelationsManager.getUserApi();
         musicLibraryManager = userDataAndRelationsManager.getMusicLibraryManager();
 
+        //can be used to test the app when there is no user cache available
+        //userDataAndRelationsManager.recreateTable();
+
         //load the cached User Data in the beginning.
         setUserDTO(getUserDetailsFromCache());
+        userFeeds = new ArrayList<>();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -145,7 +153,11 @@ public class MainActivity extends AppCompatActivity {
                     ErrorTemplateFragment.newInstance(null, null));
         }
 
-        friendsListFragment = FriendsListFragment.newInstance(getUserDTO().getFriends(), LinearLayoutManager.VERTICAL);
+        friendsListFragment = FriendsListFragment.newInstance(
+                getUserDTO().getFriends() == null ? new ArrayList<FriendDTO>() : getUserDTO().getFriends()
+                , LinearLayoutManager.VERTICAL);
+
+        activitiesFragment = ActivitiesFragment.newInstance(userFeeds);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(getViewPagerAdapter());
@@ -196,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
         //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Feed");
         viewPagerAdapter.addFragment(friendsListFragment, "Friends");
-        //viewPagerAdapter.addFragment(new MediaPlayerFragment(), "Notifications");
+        viewPagerAdapter.addFragment(activitiesFragment, "Feed");
         return viewPagerAdapter;
     }
 
@@ -233,8 +245,11 @@ public class MainActivity extends AppCompatActivity {
         UserDTO userDetails = getUserDetailsFromCache();
         setUserDTO(userDetails);
         setScreenDetails();
-        FriendsListFragment frag = (FriendsListFragment) viewPager.getAdapter().instantiateItem(viewPager, 0);
         friendsListFragment.updateDataSet(userDetails.getFriends());
+    }
+
+    private void updateUserFeeds(List<SocialActivityDTO> updatedFeeds) {
+        activitiesFragment.updateDataSet(updatedFeeds);
     }
 
     private void login(final UserDTO userDetails) {
@@ -247,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 loading.dismiss();
                 if(response.isSuccessful() && response.body() != null) {
                     updateAndRefreshUserDetails(response.body());
+                    getFeeds(response.body().getId());
                     Log.i("LOGIN", "User found: " + getUserDTO().getId());
                     Toast.makeText(MainActivity.this, "User found: " + getUserDTO().getId(), Toast.LENGTH_SHORT).show();
                 } else {
@@ -260,6 +276,31 @@ public class MainActivity extends AppCompatActivity {
                 loading.dismiss();
                 Toast.makeText(MainActivity.this, "Login call failed.", Toast.LENGTH_SHORT).show();
                 Log.e("Login call failed for ", userDetails.getFbId() + "[" + t.getMessage() + "]");
+            }
+        });
+    }
+
+    private void getFeeds(String userId) {
+        Call<List<SocialActivityDTO>> feedsCall = userApi.getFeeds(userId);
+        feedsCall.enqueue(new Callback<List<SocialActivityDTO>>() {
+            @Override
+            public void onResponse(Call<List<SocialActivityDTO>> call, Response<List<SocialActivityDTO>> response) {
+                List<SocialActivityDTO> feeds = response.body();
+                if(feeds == null) {
+                    Toast.makeText(MainActivity.this, "Unable to fetch User Feeds.", Toast.LENGTH_LONG).show();
+                    Log.e("MAIN_ACTIVITY", "Unable to fetch User Feeds.");
+                } else {
+                    Log.i("MAIN_ACTIVITY", "Fetched User feeds. Size: " + feeds.size());
+                    Toast.makeText(MainActivity.this, "User Feed updated.", Toast.LENGTH_LONG).show();
+                    userFeeds = feeds;
+                    updateUserFeeds(userFeeds);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SocialActivityDTO>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Unable to fetch User Feeds.", Toast.LENGTH_LONG).show();
+                Log.e("MAIN_ACTIVITY", "Unable to fetch User Feeds.");
             }
         });
     }

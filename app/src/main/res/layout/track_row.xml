@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1sp"
-    android:weightSum="10">
-
-    <ImageView
-        android:layout_margin="10sp"
-        android:id="@+id/thumbnail"
-        android:layout_width="0sp"
-        android:layout_height="40sp"
-        android:layout_weight="1.25"
-        android:background="@color/defaultCardBg"/>
-
-    <RelativeLayout
-        android:layout_weight="7.75"
-        android:layout_width="0sp"
+    android:layout_marginBottom="1sp">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/default_track_list_row_padding">
-        <TextView
-            android:id="@+id/track_title"
-            android:layout_width="match_parent"
+        android:weightSum="10">
+
+        <ImageView
+            android:layout_margin="10sp"
+            android:id="@+id/thumbnail"
+            android:layout_width="0sp"
+            android:layout_height="40sp"
+            android:layout_weight="1.25"
+            android:background="@color/defaultCardBg"/>
+
+        <RelativeLayout
+            android:layout_weight="7.75"
+            android:layout_width="0sp"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-normal"
-            android:text="Track"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:textColor="@color/primaryTextColor"/>
+            android:padding="@dimen/default_track_list_row_padding">
+            <TextView
+                android:id="@+id/track_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-normal"
+                android:text="Track"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:textColor="@color/primaryTextColor"/>
 
-        <LinearLayout
-            android:id="@+id/action_btns"
-            android:layout_below="@+id/track_artist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8sp"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            <TextView
+                android:id="@+id/track_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Artist"
+                android:fontFamily="sans-serif-light"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="marquee"
+                android:layout_below="@+id/track_title"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
 
-            <include layout="@layout/content_track_action_buttons"/>
+        <ImageButton
+            android:layout_weight="1"
+            android:layout_marginTop="0sp"
+            android:background="@android:color/transparent"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:id="@+id/options"
+            android:src="@drawable/ic_more_vert_black_24dp"/>
+    </LinearLayout>
 
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/track_artist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Artist"
-            android:fontFamily="sans-serif-light"
-            android:textSize="12sp"
-            android:maxLines="1"
-            android:ellipsize="marquee"
-            android:layout_below="@+id/track_title"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-    </RelativeLayout>
-
-    <ImageButton
-        android:layout_weight="1"
-        android:layout_marginTop="0sp"
-        android:background="@android:color/transparent"
-        android:layout_width="0sp"
+    <LinearLayout
+        android:id="@+id/action_btns"
+        android:layout_below="@+id/track_artist"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/options"
-        android:src="@drawable/ic_more_vert_black_24dp"/>
+        android:layout_marginTop="2sp"
+        android:layout_marginBottom="12sp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <include layout="@layout/content_track_action_buttons"/>
+
+    </LinearLayout>
+
 </LinearLayout>

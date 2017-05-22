@@ -55,6 +55,10 @@ public class UserDataAndRelationsManager {
         EventBus.getDefault().register(this);
     }
 
+    public void recreateTable() {
+        userRelCacheDAO.recreateTable();
+    }
+
     public UserDTO getAppUserDataFromCache() {
         List<UserRelCache> userRelCaches = userRelCacheDAO.getAllUserInfoWithRelTp(UserRelCache.RELATIONSHIP_TYPES.APP_USER);
         if(userRelCaches == null || userRelCaches.size() == 0)
