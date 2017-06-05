@@ -84,10 +84,12 @@ public class FacebookLoginActivity extends Activity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(final LoginResult loginResult) {
-               /* info.setText("Welcome: " + loginResult.getAccessToken().getUserId()
-                + "\nAuth Token: "+ loginResult.getAccessToken().getToken());*/
+                //Toast.makeText(FacebookLoginActivity.this, "Token: " + loginResult.getAccessToken().getToken(), Toast.LENGTH_LONG).show();
+
                 final Profile profile = Profile.getCurrentProfile();
+                //Toast.makeText(FacebookLoginActivity.this, "Profile: " + profile.getFirstName(), Toast.LENGTH_LONG).show();
                 Log.i("User Name", profile.getName());
+
                 Log.i("Access Token", loginResult.getAccessToken().getToken());
                 Log.i("Permissions", String.valueOf(AccessToken.getCurrentAccessToken().getPermissions()));
                 Bundle parameters = new Bundle();
@@ -107,6 +109,7 @@ public class FacebookLoginActivity extends Activity {
                                 userDTO.setFriends(friends);
 
                                 intent.putExtra("USER_FB_DETAILS", userDTO);
+                                Log.i("Fb Id of User: ", userDTO.getFbId());
                                 startActivity(intent);
                                 finish(); //finish the activity so that the user doesn't get back to the login screen
                             }

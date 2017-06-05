@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public class SongMetadataDTO implements Serializable {
 
+    private String metadataHash;
+
     private String id;
 
     private String title;
@@ -20,6 +22,14 @@ public class SongMetadataDTO implements Serializable {
     private String duration;
 
     private String data;
+
+    public String getMetadataHash() {
+        return metadataHash;
+    }
+
+    public void setMetadataHash(String metadataHash) {
+        this.metadataHash = metadataHash;
+    }
 
     public String getId() {
         return id;

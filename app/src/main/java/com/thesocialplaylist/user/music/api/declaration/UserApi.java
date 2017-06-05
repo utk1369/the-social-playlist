@@ -43,7 +43,7 @@ public interface UserApi {
     Call<UserDTO> getProfile(@Path(value = "id") String id, @Body UserProfileRequestDTO userProfileRequestDTO);
 
     @POST(value = "users/activity/save")
-    Call<SongDTO> linkSongToActivity(@Body SocialActivityDTO socialActivityDTO);
+    Call<SocialActivityDTO> linkSongToActivity(@Body SocialActivityDTO socialActivityDTO);
 
     @POST(value = "activities/search")
     Call<List<SocialActivityDTO>> searchActivities(@Body SocialActivityDTO searchPayload);

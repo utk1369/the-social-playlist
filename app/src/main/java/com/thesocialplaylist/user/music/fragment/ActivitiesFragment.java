@@ -100,6 +100,7 @@ public class ActivitiesFragment extends Fragment {
     }
 
     public void updateDataSet(List<SocialActivityDTO> updatedListOfActivities) {
+        this.socialActivityDTOs = updatedListOfActivities;
         adapter.updateDataSet(updatedListOfActivities);
     }
 

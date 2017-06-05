@@ -18,8 +18,6 @@ public class SocialActivityDTO implements Serializable {
 
     private String postedBy;
 
-    private String parentActivity;
-
     private SocialActivityType activityType;
 
     private SocialActivityDomain domain;
@@ -27,6 +25,8 @@ public class SocialActivityDTO implements Serializable {
     private List<String> recipientUserIds;
 
     private SongMetadataDTO songMetadata;
+
+    private String link;
 
     private List<String> likes;
 
@@ -50,14 +50,6 @@ public class SocialActivityDTO implements Serializable {
 
     public void setPostedBy(String postedBy) {
         this.postedBy = postedBy;
-    }
-
-    public String getParentActivity() {
-        return parentActivity;
-    }
-
-    public void setParentActivity(String parentActivity) {
-        this.parentActivity = parentActivity;
     }
 
     public SocialActivityType getActivityType() {
@@ -90,6 +82,14 @@ public class SocialActivityDTO implements Serializable {
 
     public void setSongMetadata(SongMetadataDTO songMetadata) {
         this.songMetadata = songMetadata;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public List<String> getLikes() {

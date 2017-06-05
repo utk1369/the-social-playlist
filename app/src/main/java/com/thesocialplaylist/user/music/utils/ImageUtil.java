@@ -45,6 +45,20 @@ public class ImageUtil {
                 .into(imageView);
     }
 
+    public static void loadImageUsingPicasso(Context context, Uri uri, ImageView imageView) {
+        Picasso.with(context)
+                .load(uri)
+                .fit()
+                .into(imageView);
+    }
+
+    public static void loadImageUsingPicasso(Context context, int resourceId, ImageView imageView) {
+        Picasso.with(context)
+                .load(resourceId)
+                .fit()
+                .into(imageView);
+    }
+
     private static Uri getAlbumArtUri(Long albumId) {
         Uri albumsUri = Uri.parse("content://media/external/audio/albumart");
         Uri albumArtUri = ContentUris.withAppendedId(albumsUri, albumId);

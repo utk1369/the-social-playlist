@@ -15,6 +15,9 @@ import java.util.List;
 @Table(name="songs_cache")
 public class SongsCache extends Model implements Serializable {
 
+    @Column(name="metadata_hash", unique = true)
+    private String metadataHash;
+
     @Column(name="song_id", unique = true)
     private String songId;
 
@@ -35,6 +38,14 @@ public class SongsCache extends Model implements Serializable {
 
     public List<ExternalLinksCache> externalLinksCache() {
         return getMany(ExternalLinksCache.class, "songs_cache");
+    }
+
+    public String getMetadataHash() {
+        return metadataHash;
+    }
+
+    public void setMetadataHash(String metadataHash) {
+        this.metadataHash = metadataHash;
     }
 
     public String getSongId() {

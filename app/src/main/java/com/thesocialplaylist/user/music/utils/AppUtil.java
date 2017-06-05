@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.fragment.ErrorTemplateFragment;
 import com.thesocialplaylist.user.music.dto.SongMetadataDTO;
 
@@ -42,5 +43,11 @@ public class AppUtil {
 
     public static Fragment getErrorFragment(String message, int icon) {
         return ErrorTemplateFragment.newInstance(message, icon);
+    }
+
+    public static String getMetadataHash(SongMetadataDTO metadata) {
+        String separator = "+";
+        String metadataString = metadata.getTitle() + separator + metadata.getAlbum() + separator + metadata.getArtist();
+        return TextUtil.encodeText(metadataString);
     }
 }

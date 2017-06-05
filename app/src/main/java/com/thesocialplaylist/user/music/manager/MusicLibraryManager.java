@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
 import com.thesocialplaylist.user.music.dto.AlbumDTO;
 import com.thesocialplaylist.user.music.dto.ExternalLinksDTO;
@@ -21,6 +22,8 @@ import com.thesocialplaylist.user.music.sqlitedbcache.dao.ExternalLinksCacheDAO;
 import com.thesocialplaylist.user.music.sqlitedbcache.dao.SongsCacheDAO;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache;
 import com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache;
+import com.thesocialplaylist.user.music.utils.AppUtil;
+import com.thesocialplaylist.user.music.utils.TextUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -55,6 +58,8 @@ public class MusicLibraryManager {
             metadata.setData(cursor.getString(5));
             metadata.setAlbumId(Long.parseLong(cursor.getString(6)));
             metadata.setAlbum(cursor.getString(7));
+
+            metadata.setMetadataHash(AppUtil.getMetadataHash(metadata));
 
             songMetadataDTOs.add(metadata);
         }
@@ -171,10 +176,11 @@ public class MusicLibraryManager {
     }
 
     public SongDTO saveSongDetailsToCache(SongDTO songDTO) {
-        SongsCache existingSongsCache = songsCacheDAO.getOneSongForGivenClause("song_id = ?", songDTO.getId());
+
+        SongsCache existingSongsCache = songsCacheDAO.getOneSongForGivenClause("metadata_hash = ?" , AppUtil.getMetadataHash(songDTO.getMetadata()));
         Long mId = null;
 
-        //Insert
+        //insert
         if(existingSongsCache == null) {
             songsCacheDAO.save(SongDTOExtractor.extractSongsCacheFromSongDTO(songDTO));
         } else { //Update
@@ -215,11 +221,10 @@ public class MusicLibraryManager {
     public void updateSyncStatus(List<SongDTO> songs, Boolean syncStatus) {
         if(songs == null || songs.size() == 0)
             return;
-        String songIdsToUpdate[] = new String[songs.size()];
+        String songsToUpdate[] = new String[songs.size()];
         for(int i=0; i < songs.size(); i++) {
-            songIdsToUpdate[i] = (songs.get(i).getId());
+            songsToUpdate[i] = AppUtil.getMetadataHash(songs.get(i).getMetadata());
         }
-
-        songsCacheDAO.updateSongsCache("is_synced = ?", syncStatus, "song_id IN (" + TextUtils.join(",", songIdsToUpdate) + ")");
+        songsCacheDAO.updateSongsCache("is_synced = ?", syncStatus, "metadata_hash IN ('" + TextUtils.join("','", songsToUpdate) + "')");
     }
 }

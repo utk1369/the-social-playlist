@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
@@ -256,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
         final ProgressDialog loading = ProgressDialog.show(MainActivity.this, "Please wait", "Refreshing your screen");
         UserLoginRequestDTO userLoginRequestDTO = new UserLoginRequestDTO(userDetails, Arrays.asList(new PopulateDTO("friends.friend", "name fbId imageUrl status")));
         Call<UserDTO> loginCall = userApi.login(true, userLoginRequestDTO);
+        Log.i("Login Request payload", new Gson().toJson(userLoginRequestDTO));
         loginCall.enqueue(new Callback<UserDTO>() {
             @Override
             public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
@@ -266,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("LOGIN", "User found: " + getUserDTO().getId());
                     Toast.makeText(MainActivity.this, "User found: " + getUserDTO().getId(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("LOGIN", "Some error! [" + response.errorBody().toString()+ "]");
+                    Log.e("LOGIN", "Some error! [" + response.errorBody().charStream()+ "]");
                     Toast.makeText(MainActivity.this, "User retrieval unsuccessful.", Toast.LENGTH_SHORT).show();
 
                 }

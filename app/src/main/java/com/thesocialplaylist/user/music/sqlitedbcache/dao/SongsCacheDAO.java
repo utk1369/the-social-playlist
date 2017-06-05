@@ -59,7 +59,7 @@ public class SongsCacheDAO {
             return;
         if(existingSongsCache.getSongId() == null || newSongsCache.getSongId() == null ||
                 !existingSongsCache.getSongId().equals(newSongsCache.getSongId()))
-            throw new IllegalArgumentException("Song Ids do not match for " + existingSongsCache.getSongId());
+            existingSongsCache.setSongId(newSongsCache.getSongId());
         if((existingSongsCache.getHits() == null && newSongsCache.getHits() != null) ||
                 (existingSongsCache.getHits() != null && !existingSongsCache.getHits().equals(newSongsCache.getHits())))
             existingSongsCache.setHits(newSongsCache.getHits());

@@ -323,6 +323,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         Intent shareIntent = new Intent(MediaPlayerActivity.this, SongShareActivity.class);
         shareIntent.putExtra("SONG_TO_SHARE", songDTO);
         shareIntent.putExtra("ACTIVITY_TYPE", activityType);
+        shareIntent.putExtra("SHARING_AGENT", SongShareActivity.SharingAgent.INTERNAL);
         startActivity(shareIntent);
     }
 }

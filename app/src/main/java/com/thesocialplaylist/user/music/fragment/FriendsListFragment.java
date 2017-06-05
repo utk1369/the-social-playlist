@@ -110,6 +110,7 @@ public class FriendsListFragment extends Fragment {
 
     public void updateDataSet(List<FriendDTO> updatedFriendsList) {
         if(listOrientation == LinearLayoutManager.VERTICAL) {
+            this.friendsList = updatedFriendsList;
             verticalFriendsListAdapter.refreshFriendsList(updatedFriendsList);
         } else if(listOrientation == LinearLayoutManager.HORIZONTAL) {
             //horizontalFriendsListAdapter.refreshFriendsList(updatedFriendsList);

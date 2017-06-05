@@ -50,7 +50,9 @@ public class UserProfileActivity extends AppCompatActivity
     private ActionBar actionBar;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private TextView userName;
+    private TextView noOfFriends;
+    private TextView noOfSongs;
+    private TextView noOfActivities;
     private TextView userStatus;
     private CircularImageView userImg;
 
@@ -96,12 +98,15 @@ public class UserProfileActivity extends AppCompatActivity
         getUserActivities(userId);
 
         actionBar = getSupportActionBar();
-        actionBar.setTitle("User Profile");
         appUserDetails = userDataAndRelationsManager.getAppUserDataFromCache();
 
-        userName = (TextView) findViewById(R.id.user_name);
-        userStatus = (TextView) findViewById(R.id.user_status);
+        noOfFriends = (TextView) findViewById(R.id.no_of_friends);
+        noOfSongs = (TextView) findViewById(R.id.no_of_songs);
+        noOfActivities = (TextView) findViewById(R.id.no_of_activities);
+
         userImg = (CircularImageView) findViewById(R.id.user_img);
+        userStatus = (TextView) findViewById(R.id.user_status);
+
 
         loading = ProgressDialog.show(UserProfileActivity.this, "Please wait", "Fetching User Profile");
     }
@@ -224,8 +229,13 @@ public class UserProfileActivity extends AppCompatActivity
         activitiesFragment = ActivitiesFragment.newInstance(userActivities);
 
         loading.dismiss();
-        userName.setText(userDetails.getName());
+        actionBar.setTitle(userDetails.getName());
+        noOfFriends.setText(userDetails.getFriends().size() + "");
+        noOfSongs.setText(userDetails.getSongs().size() + "");
+        noOfActivities.setText(userActivities.size() + "");
         userStatus.setText(userDetails.getStatus());
+
+
         Picasso.with(getApplicationContext())
                 .load(userDetails.getImageUrl())
                 .fit()

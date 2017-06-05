@@ -14,7 +14,8 @@
 
     <application
         android:name=".TheSocialPlaylistApplication"
-        android:allowBackup="true"
+        tools:node="replace"
+        android:allowBackup="false"
         android:icon="@drawable/ic_library_music_black_24dp"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
@@ -26,10 +27,12 @@
             android:value="the_social_playlist_cache.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="7" />
+            android:value="9" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache,                              com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,                              com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
+            android:value="com.thesocialplaylist.user.music.sqlitedbcache.model.SongsCache,
+                com.thesocialplaylist.user.music.sqlitedbcache.model.ExternalLinksCache,
+                com.thesocialplaylist.user.music.sqlitedbcache.model.UserRelCache" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -53,21 +56,12 @@
         <activity
             android:name=".activity.musicplayer.MediaPlayerActivity"
             android:label="@string/title_activity_media_player">
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".activity.facebook.FacebookLoginActivity"
             android:label="@string/title_activity_facebook_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -103,7 +97,13 @@
             android:name=".activity.musicplayer.SongShareActivity"
             android:label="@string/title_activity_song_share"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.UserListActivity"
             android:label="@string/title_activity_user_list"
