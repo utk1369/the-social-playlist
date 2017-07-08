@@ -27,6 +27,14 @@ public class MusicLibraryTracksListAdapter extends RecyclerView.Adapter<MusicLib
     private OnTrackItemClickListener onTrackItemClickListener;
     private OnOptionsButtonClickListener onOptionsButtonClickListener;
 
+    public int getSelectedRow() {
+        return selectedRow;
+    }
+
+    public void setSelectedRow(int selectedRow) {
+        this.selectedRow = selectedRow;
+    }
+
     public interface OnTrackItemClickListener {
         public void onTrackItemClick(View v, int position, List<SongDTO> tracksList);
     }
@@ -86,7 +94,6 @@ public class MusicLibraryTracksListAdapter extends RecyclerView.Adapter<MusicLib
     }
 
     public class MusicLibraryTrackRowHolder extends RecyclerView.ViewHolder {
-        private static final int RANGE_THRESHOLD = 10;
         private ImageView thumbnail;
         private TextView trackTitle;
         private TextView trackArtist;
@@ -105,11 +112,7 @@ public class MusicLibraryTracksListAdapter extends RecyclerView.Adapter<MusicLib
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    selectedRow = getAdapterPosition();
                     if(onTrackItemClickListener != null) {
-                        notifyItemChanged(getAdapterPosition());
-                        notifyItemRangeChanged(Math.max(0, getAdapterPosition() - RANGE_THRESHOLD),
-                                Math.min(tracksList.size() - (getAdapterPosition() - RANGE_THRESHOLD), 2 * RANGE_THRESHOLD));
                         onTrackItemClickListener.onTrackItemClick(itemView, getAdapterPosition(), tracksList);
                     }
                 }
@@ -136,5 +139,9 @@ public class MusicLibraryTracksListAdapter extends RecyclerView.Adapter<MusicLib
             this.tracksList.set(i, updatedSongsList.get(i));
         }
         notifyItemRangeChanged(start, (end - start + 1));
+    }
+
+    public void refreshTrackItem(List<SongDTO> updatedSongsList, int idx) {
+        refreshTracksListRange(updatedSongsList, idx, idx);
     }
 }

@@ -20,7 +20,9 @@ import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.adapters.recyclerview.MusicLibraryTracksListAdapter;
 import com.thesocialplaylist.user.music.dto.AlbumDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
+import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
+import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.TracksListFragment;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
@@ -28,6 +30,10 @@ import com.thesocialplaylist.user.music.utils.ImageUtil;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -49,8 +55,12 @@ public class AlbumDetailsActivity extends AppCompatActivity
     private Boolean isBoundToService;
     private Intent musicServiceIntent;
 
+    private TracksListFragment tracksListFragment;
+
     @Inject
     MusicLibraryManager musicLibraryManager;
+
+    private List<SongDTO> songDTOs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,17 +94,17 @@ public class AlbumDetailsActivity extends AppCompatActivity
         actionBar.setTitle(albumDTO.getAlbumName());
         prepareTracksFragment();
         ImageUtil.loadAlbumArt(getApplicationContext(), albumDTO.getAlbumId(), albumArt);
-        Toast.makeText(AlbumDetailsActivity.this, "AlbumDTO: " + albumDTO.getAlbumName() , Toast.LENGTH_SHORT).show();
+        EventBus.getDefault().register(this);
     }
 
     private void prepareTracksFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.add(R.id.tracks_fragment,
-                TracksListFragment.newInstance(musicLibraryManager.getAllSongs(MediaStore.Audio.Media.ALBUM_ID + " = ?",
-                        new String[]{"" + albumDTO.getAlbumId()}), TracksListMode.MUSIC_PLAYER_MODE),
-                "ALBUM_SONGS");
+        songDTOs = musicLibraryManager.getAllSongs(MediaStore.Audio.Media.ALBUM_ID + " = ?",
+                new String[]{"" + albumDTO.getAlbumId()});
+        tracksListFragment = TracksListFragment.newInstance(songDTOs, TracksListMode.MUSIC_PLAYER_MODE);
+        fragmentTransaction.add(R.id.tracks_fragment, tracksListFragment, "ALBUM_SONGS");
         fragmentTransaction.commit();
     }
 
@@ -129,6 +139,19 @@ public class AlbumDetailsActivity extends AppCompatActivity
             musicService.playSong(tracksList, position);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTrackPlaybackEvent(TrackPlaybackEvent trackPlaybackEvent) {
+        PlaybackEvent event = trackPlaybackEvent.getPlaybackEvent();
+        if(event.equals(PlaybackEvent.NEW_TRACK)) {
+            int newSongIdx = musicService.getCurrentPlayingPosition();
+            int prevSongIdx = tracksListFragment.getCurrentPlayingTrackIdx();
+            tracksListFragment.setCurrentPlayingTrackIdx(newSongIdx);
+
+            tracksListFragment.updateDataRange(songDTOs, newSongIdx, newSongIdx);
+            tracksListFragment.updateDataRange(songDTOs, prevSongIdx, prevSongIdx);
         }
     }
 }

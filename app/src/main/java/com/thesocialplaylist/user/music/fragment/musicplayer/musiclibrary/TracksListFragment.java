@@ -46,6 +46,16 @@ public class TracksListFragment extends Fragment {
 
     private TracksListMode mode;
 
+    private int currentPlayingTrackIdx;
+
+    public int getCurrentPlayingTrackIdx() {
+        return musicLibraryTracksListAdapter.getSelectedRow();
+    }
+
+    public void setCurrentPlayingTrackIdx(int currentPlayingTrackIdx) {
+        musicLibraryTracksListAdapter.setSelectedRow(currentPlayingTrackIdx);
+    }
+
     public TracksListFragment() {
 
     }

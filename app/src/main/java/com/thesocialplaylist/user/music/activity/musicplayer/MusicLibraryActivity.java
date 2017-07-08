@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,11 +16,14 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.adapters.recyclerview.MusicLibraryTracksListAdapter;
 import com.thesocialplaylist.user.music.dto.SongDTO;
+import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.TracksListMode;
+import com.thesocialplaylist.user.music.events.models.TrackPlaybackEvent;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.AlbumsGridFragment;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.ArtistsListFragment;
 import com.thesocialplaylist.user.music.fragment.musicplayer.musiclibrary.TracksListFragment;
@@ -28,6 +32,10 @@ import com.thesocialplaylist.user.music.ViewPagerAdapter;
 import com.thesocialplaylist.user.music.manager.MusicLibraryManager;
 import com.thesocialplaylist.user.music.service.MusicService;
 import com.thesocialplaylist.user.music.utils.AppUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -51,6 +59,12 @@ public class MusicLibraryActivity extends AppCompatActivity
 
     @Inject
     MusicLibraryManager musicLibraryManager;
+
+    private TracksListFragment tracksListFragment;
+
+    private int currentPlayingTrackIdx;
+
+    private int previousPlayingTrackIdx;
 
     private ServiceConnection musicServiceConn = new ServiceConnection() {
         @Override
@@ -96,6 +110,8 @@ public class MusicLibraryActivity extends AppCompatActivity
 
         mTabLayout = (TabLayout) findViewById(R.id.music_library_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
+
+        EventBus.getDefault().register(this);
     }
 
     private ViewPagerAdapter getViewPagerAdapter() {
@@ -103,8 +119,8 @@ public class MusicLibraryActivity extends AppCompatActivity
 
         try {
             songDTOs = musicLibraryManager.getAllSongs();
-            viewPagerAdapter.addFragment(TracksListFragment.newInstance(
-                    songDTOs, TracksListMode.MUSIC_PLAYER_MODE), "Songs");
+            tracksListFragment = TracksListFragment.newInstance(songDTOs, TracksListMode.MUSIC_PLAYER_MODE);
+            viewPagerAdapter.addFragment(tracksListFragment, "Songs");
         } catch (SecurityException e) {
             viewPagerAdapter.addFragment(
                     AppUtil.getErrorFragment("Permission denied.", R.drawable.ic_search_black_36dp), "Songs");
@@ -152,7 +168,21 @@ public class MusicLibraryActivity extends AppCompatActivity
             musicService.playSong(tracksList, position);
 
         } catch (Exception e) {
+            Toast.makeText(this, "Error playing track.", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTrackPlaybackEvent(TrackPlaybackEvent trackPlaybackEvent) {
+        PlaybackEvent event = trackPlaybackEvent.getPlaybackEvent();
+        if(event.equals(PlaybackEvent.NEW_TRACK)) {
+            int newSongIdx = musicService.getCurrentPlayingPosition();
+            int prevSongIdx = tracksListFragment.getCurrentPlayingTrackIdx();
+            tracksListFragment.setCurrentPlayingTrackIdx(newSongIdx);
+
+            tracksListFragment.updateDataRange(songDTOs, newSongIdx, newSongIdx);
+            tracksListFragment.updateDataRange(songDTOs, prevSongIdx, prevSongIdx);
         }
     }
 }
