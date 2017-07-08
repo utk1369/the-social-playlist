@@ -29,9 +29,11 @@ import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.adapters.custom.FriendsSearchAutoCompleteAdapter;
 import com.thesocialplaylist.user.music.api.declaration.UserApi;
 import com.thesocialplaylist.user.music.dto.FriendDTO;
+import com.thesocialplaylist.user.music.dto.LinkDTO;
 import com.thesocialplaylist.user.music.dto.SocialActivityDTO;
 import com.thesocialplaylist.user.music.dto.SongDTO;
 import com.thesocialplaylist.user.music.dto.UserDTO;
+import com.thesocialplaylist.user.music.enums.ActivitySourceType;
 import com.thesocialplaylist.user.music.enums.SocialActivityDomain;
 import com.thesocialplaylist.user.music.enums.SocialActivityType;
 import com.thesocialplaylist.user.music.fragment.FriendsListFragment;
@@ -79,7 +81,7 @@ public class SongShareActivity extends AppCompatActivity {
 
     private SongDTO songToShare;
 
-    private SharingAgent sharingAgent;
+    private ActivitySourceType activitySourceType;
 
     private TextView previewTitle;
 
@@ -108,12 +110,9 @@ public class SongShareActivity extends AppCompatActivity {
     @Inject
     UserDataAndRelationsManager userDataAndRelationsManager;
 
-    private String link;
+    private String linkUrl;
 
-    public enum SharingAgent {
-        EXTERNAL,
-        INTERNAL
-    }
+    private LinkDTO linkDTO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +129,9 @@ public class SongShareActivity extends AppCompatActivity {
         Intent songShareIntent = getIntent();
         songToShare = (SongDTO) songShareIntent.getSerializableExtra("SONG_TO_SHARE");
         socialActivityType = (SocialActivityType) songShareIntent.getSerializableExtra("ACTIVITY_TYPE");
-        sharingAgent = (SharingAgent) songShareIntent.getSerializableExtra("SHARING_AGENT");
+        activitySourceType = (ActivitySourceType) songShareIntent.getSerializableExtra("ACTIVITY_SOURCE");
+        if(activitySourceType == null)
+            activitySourceType = ActivitySourceType.EXTERNAL;
         userApi = userDataAndRelationsManager.getUserApi();
 
         sourceApp = songShareIntent.getPackage();
@@ -166,29 +167,34 @@ public class SongShareActivity extends AppCompatActivity {
             prepareLayout();
         }
 
-        if(sharingAgent != SharingAgent.INTERNAL) {
+        if(activitySourceType == ActivitySourceType.EXTERNAL) {
             songMetadatCard.setVisibility(View.GONE);
             externalLinkCard.setVisibility(View.VISIBLE);
-            link = songShareIntent.getExtras().getString(Intent.EXTRA_TEXT);
+            linkUrl = songShareIntent.getExtras().getString(Intent.EXTRA_TEXT);
             textCrawler.makePreview(new LinkPreviewCallback() {
                 @Override
                 public void onPre() {
-                    Toast.makeText(SongShareActivity.this, "Loading: " + link, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SongShareActivity.this, "Loading: " + linkUrl, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onPos(SourceContent sourceContent, boolean b) {
                     Toast.makeText(SongShareActivity.this, "Title: " + sourceContent.getTitle(), Toast.LENGTH_SHORT).show();
+                    linkDTO = new LinkDTO();
+                    linkDTO.setUrl(linkUrl);
+                    linkDTO.setPreviewTitle(sourceContent.getTitle());
                     previewTitle.setText(sourceContent.getTitle());
                     Toast.makeText(SongShareActivity.this, "Description: " + sourceContent.getDescription(), Toast.LENGTH_SHORT).show();
-                    if(sourceContent.getImages() != null || sourceContent.getImages().size() > 0) {
+                    if(sourceContent.getImages() != null && sourceContent.getImages().size() > 0) {
                         Toast.makeText(SongShareActivity.this, "Image(0): " + sourceContent.getImages().get(0), Toast.LENGTH_SHORT).show();
                         ImageUtil.loadImageUsingPicasso(getApplicationContext(),
                                 Uri.parse(sourceContent.getImages().get(0)), previewImg);
+                        linkDTO.setPreviewImage(sourceContent.getImages().get(0));
                     }
                     previewDesc.setText(sourceContent.getDescription());
+                    linkDTO.setPreviewDesc(sourceContent.getDescription());
                 }
-            }, link);
+            }, linkUrl);
 
         } else {
             if(songToShare != null && songToShare.getMetadata() != null) {
@@ -223,7 +229,8 @@ public class SongShareActivity extends AppCompatActivity {
                 socialActivityDTO.setPostedBy(userDetails.getId());
                 if(songToShare != null)
                     socialActivityDTO.setSongMetadata(songToShare.getMetadata());
-                socialActivityDTO.setLink(link);
+                socialActivityDTO.setLink(linkDTO);
+                socialActivityDTO.setSource(activitySourceType);
                 socialActivityDTO.setActivityType(socialActivityType);
                 socialActivityDTO.setDomain(socialActivityDomain);
                 socialActivityDTO.setCaption(caption.getText().toString());
@@ -262,7 +269,6 @@ public class SongShareActivity extends AppCompatActivity {
         if(!isValidActivity) {
             return;
         }
-        Log.i("SHARE Payload", new Gson().toJson(socialActivityDTO));
         final ProgressDialog loading = ProgressDialog.show(SongShareActivity.this, "Please wait", "Sharing your activity");
         Call<SocialActivityDTO> activitySaveCall = userApi.linkSongToActivity(socialActivityDTO);
         activitySaveCall.enqueue(new Callback<SocialActivityDTO>() {

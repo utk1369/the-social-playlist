@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.activeandroid.ActiveAndroid;
 
+import com.crashlytics.android.Crashlytics;
 import com.thesocialplaylist.user.music.dependencyinjection.components.DaggerMusicLibraryManagerComponent;
 import com.thesocialplaylist.user.music.dependencyinjection.components.DaggerUserDataAndRelationsManagerComponent;
 import com.thesocialplaylist.user.music.dependencyinjection.components.MusicLibraryManagerComponent;
@@ -12,6 +13,7 @@ import com.thesocialplaylist.user.music.dependencyinjection.modules.AppModule;
 import com.thesocialplaylist.user.music.dependencyinjection.modules.RetrofitModule;
 import com.thesocialplaylist.user.music.utils.AppUtil;
 
+import io.fabric.sdk.android.Fabric;
 import java.io.IOException;
 
 /**
@@ -36,6 +38,7 @@ public class TheSocialPlaylistApplication extends Application {
 
     @Override
     public void onCreate() {
+        Fabric.with(this, new Crashlytics());
         try {
             BASE_URL = AppUtil.getProperty("api.base.url", getApplicationContext());
         } catch (IOException e) {

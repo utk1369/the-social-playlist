@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.thesocialplaylist.user.music.R;
 import com.thesocialplaylist.user.music.TheSocialPlaylistApplication;
 import com.thesocialplaylist.user.music.dto.SongDTO;
+import com.thesocialplaylist.user.music.enums.ActivitySourceType;
 import com.thesocialplaylist.user.music.enums.PlaybackEvent;
 import com.thesocialplaylist.user.music.enums.SocialActivityType;
 import com.thesocialplaylist.user.music.events.models.SyncTracksEvent;
@@ -323,7 +324,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         Intent shareIntent = new Intent(MediaPlayerActivity.this, SongShareActivity.class);
         shareIntent.putExtra("SONG_TO_SHARE", songDTO);
         shareIntent.putExtra("ACTIVITY_TYPE", activityType);
-        shareIntent.putExtra("SHARING_AGENT", SongShareActivity.SharingAgent.INTERNAL);
+        shareIntent.putExtra("ACTIVITY_SOURCE", ActivitySourceType.LOCAL);
         startActivity(shareIntent);
     }
 }

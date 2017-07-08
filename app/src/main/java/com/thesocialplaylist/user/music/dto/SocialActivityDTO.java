@@ -1,6 +1,7 @@
 package com.thesocialplaylist.user.music.dto;
 
 import com.google.gson.annotations.SerializedName;
+import com.thesocialplaylist.user.music.enums.ActivitySourceType;
 import com.thesocialplaylist.user.music.enums.SocialActivityDomain;
 import com.thesocialplaylist.user.music.enums.SocialActivityType;
 
@@ -24,9 +25,11 @@ public class SocialActivityDTO implements Serializable {
 
     private List<String> recipientUserIds;
 
+    private ActivitySourceType source;
+
     private SongMetadataDTO songMetadata;
 
-    private String link;
+    private LinkDTO link;
 
     private List<String> likes;
 
@@ -84,11 +87,19 @@ public class SocialActivityDTO implements Serializable {
         this.songMetadata = songMetadata;
     }
 
-    public String getLink() {
+    public ActivitySourceType getSource() {
+        return source;
+    }
+
+    public void setSource(ActivitySourceType source) {
+        this.source = source;
+    }
+
+    public LinkDTO getLink() {
         return link;
     }
 
-    public void setLink(String link) {
+    public void setLink(LinkDTO link) {
         this.link = link;
     }
 

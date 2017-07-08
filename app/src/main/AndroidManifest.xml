@@ -108,6 +108,9 @@
             android:name=".activity.UserListActivity"
             android:label="@string/title_activity_user_list"
             android:theme="@style/AppTheme"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e85c0593e89cbc2350b303cabfdf20f4a9146ecb" />
     </application>
 
 </manifest>

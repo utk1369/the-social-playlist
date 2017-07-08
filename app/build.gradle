@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
@@ -39,6 +49,7 @@ repositories {
     maven { url "https://maven.google.com" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url 'https://github.com/leonardocardoso/mvn-repo/raw/master/maven-deploy' }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
@@ -68,4 +79,7 @@ dependencies {
 
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'com.leocardz:link-preview:1.2.2@aar'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
 }
